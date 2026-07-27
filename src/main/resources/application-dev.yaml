@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/academic_events}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+server:
+  port: ${PORT:8080}
+
+jwt:
+  secret: ${JWT_SECRET:dev-only-secret-please-change-me-min-32-chars}
+  access-expiration: ${JWT_ACCESS_EXPIRATION:900000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
+cors:
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+logging:
+  level:
+    ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi: DEBUG

@@ -28,6 +28,21 @@ dependencies {
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
+
+	// JWT (HS256) - https://github.com/jwtk/jjwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+
+	// Rate limiting
+	implementation 'com.bucket4j:bucket4j_jdk17-core:8.19.0'
+
+	// Documentación OpenAPI / Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
+
+	// Reportes: Excel y PDF
+	implementation 'org.apache.poi:poi-ooxml:5.5.1'
+	implementation 'com.github.librepdf:openpdf:3.0.5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-redis-test'

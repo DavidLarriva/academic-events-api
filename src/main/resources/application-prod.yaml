@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+server:
+  # PORT sí mantiene fallback: así lo exige docs/instrucciones.md sección 15 para Render
+  port: ${PORT:8080}
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-expiration: ${JWT_ACCESS_EXPIRATION}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION}
+
+cors:
+  allowed-origins: ${ALLOWED_ORIGINS}
