@@ -10,6 +10,8 @@ spring:
       timeout: 2000ms
 
 server:
+  servlet:
+    context-path: /api
   error:
     include-stacktrace: never
 
