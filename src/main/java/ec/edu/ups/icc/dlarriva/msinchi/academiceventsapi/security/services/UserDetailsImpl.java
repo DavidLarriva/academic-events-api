@@ -72,6 +72,16 @@ public class UserDetailsImpl implements UserDetails {
         return email;
     }
 
+    /**
+     * Acepta el nombre plano del rol (ej. "ADMIN"), igual que hasRole() de
+     * Spring Security, sin que quien llama tenga que conocer el prefijo
+     * ROLE_ interno de las authorities.
+     */
+    public boolean hasRole(String roleName) {
+        String authority = "ROLE_" + roleName;
+        return authorities.stream().anyMatch(a -> a.getAuthority().equals(authority));
+    }
+
     @Override
     public String getPassword() {
         return passwordHash;

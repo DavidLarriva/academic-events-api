@@ -11,6 +11,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,13 +20,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Base de seguridad (contexto-materia.md §12.9). Los requestMatchers NO
- * llevan el prefijo /api porque Spring Security evalúa la ruta antes de que
- * se aplique el context-path (§16.3). Todavía sin @EnableMethodSecurity /
- * @PreAuthorize: eso es del módulo de autorización por roles, no de este.
+ * Base de seguridad (contexto-materia.md §12.9) + autorización por roles
+ * (§13): @EnableMethodSecurity habilita @PreAuthorize en los controladores
+ * de los módulos de negocio. Los requestMatchers NO llevan el prefijo /api
+ * porque Spring Security evalúa la ruta antes de que se aplique el
+ * context-path (§16.3).
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {
 
