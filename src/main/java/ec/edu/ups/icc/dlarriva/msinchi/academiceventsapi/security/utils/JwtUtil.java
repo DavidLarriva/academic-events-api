@@ -13,11 +13,13 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Genera y valida access tokens JWT (HS256) con claim "type":"access"
- * (contexto-materia.md §12.4). Refresh token queda para un prompt siguiente.
+ * Genera y valida access tokens (claim "type":"access") y refresh tokens
+ * (claim "type":"refresh", "jti"=token_id de refresh_tokens) en HS256
+ * (contexto-materia.md §12.4, §15.2).
  */
 @Component
 public class JwtUtil {
@@ -27,6 +29,7 @@ public class JwtUtil {
     private static final String CLAIM_ROLES = "roles";
     private static final String CLAIM_TYPE = "type";
     private static final String TYPE_ACCESS = "access";
+    private static final String TYPE_REFRESH = "refresh";
 
     private final JwtProperties jwtProperties;
     private final SecretKey key;
@@ -55,10 +58,32 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateRefreshToken(Long userId, UUID tokenId) {
+        Instant now = Instant.now();
+        Instant expiry = now.plusMillis(jwtProperties.refreshExpiration());
+
+        return Jwts.builder()
+                .subject(String.valueOf(userId))
+                .id(tokenId.toString())
+                .claim(CLAIM_TYPE, TYPE_REFRESH)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiry))
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
+    }
+
     public boolean validateAccessToken(String token) {
+        return hasType(token, TYPE_ACCESS);
+    }
+
+    public boolean validateRefreshToken(String token) {
+        return hasType(token, TYPE_REFRESH);
+    }
+
+    private boolean hasType(String token, String expectedType) {
         try {
             Claims claims = parseClaims(token);
-            return TYPE_ACCESS.equals(claims.get(CLAIM_TYPE, String.class));
+            return expectedType.equals(claims.get(CLAIM_TYPE, String.class));
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
@@ -72,8 +97,16 @@ public class JwtUtil {
         return Long.valueOf(parseClaims(token).getSubject());
     }
 
+    public UUID getJtiFromToken(String token) {
+        return UUID.fromString(parseClaims(token).getId());
+    }
+
     public long getAccessExpirationMillis() {
         return jwtProperties.accessExpiration();
+    }
+
+    public long getRefreshExpirationMillis() {
+        return jwtProperties.refreshExpiration();
     }
 
     private Claims parseClaims(String token) {

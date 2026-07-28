@@ -5,7 +5,9 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.domain.
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.dtos.AuthResponseDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.dtos.AuthUserDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.dtos.LoginRequestDto;
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.dtos.RefreshTokenRequestDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.dtos.RegisterRequestDto;
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.entities.RefreshTokenEntity;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.entities.RoleEntity;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.enums.RoleName;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.repositories.RoleRepository;
@@ -23,14 +25,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Mensajes de autenticación genéricos (docs/instrucciones.md §4): login()
  * atrapa cualquier AuthenticationException (credenciales inválidas, usuario
  * inexistente, cuenta BLOCKED vía UserDetailsImpl.isEnabled()=false) y
- * responde siempre el mismo mensaje/código, para no revelar cuál de esos
- * casos ocurrió. register() sí distingue el correo duplicado con 409
- * (contexto-materia.md §12.10 lo hace explícito), a diferencia de login.
+ * responde siempre el mismo mensaje/código. register() sí distingue el
+ * correo duplicado con 409 (contexto-materia.md §12.10 lo hace explícito).
+ * Login/register/refresh ahora también emiten y persisten un refresh token
+ * (contexto-materia.md §15).
  */
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -40,20 +44,22 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
                             PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
-                            JwtUtil jwtUtil) {
+                            JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
     @Transactional
-    public AuthResponseDto register(RegisterRequestDto request) {
+    public AuthResponseDto register(RegisterRequestDto request, String clientIp) {
         String email = normalizeEmail(request.getEmail());
         if (userRepository.existsByEmail(email)) {
             throw new ConflictException("EMAIL_ALREADY_REGISTERED", "El correo ya está registrado");
@@ -77,11 +83,11 @@ public class AuthServiceImpl implements AuthService {
             throw new ConflictException("EMAIL_ALREADY_REGISTERED", "El correo ya está registrado");
         }
 
-        return buildAuthResponse(UserDetailsImpl.build(user));
+        return buildAuthResponse(user, clientIp);
     }
 
     @Override
-    public AuthResponseDto login(LoginRequestDto request) {
+    public AuthResponseDto login(LoginRequestDto request, String clientIp) {
         String email = normalizeEmail(request.getEmail());
         Authentication authentication;
         try {
@@ -92,13 +98,56 @@ public class AuthServiceImpl implements AuthService {
         }
 
         UserDetailsImpl principal = (UserDetailsImpl) authentication.getPrincipal();
-        return buildAuthResponse(principal);
+        UserEntity user = userRepository.findById(principal.getId())
+                .orElseThrow(() -> new UnauthorizedException("INVALID_CREDENTIALS", "Correo o contraseña incorrectos"));
+        return buildAuthResponse(user, clientIp);
     }
 
-    private AuthResponseDto buildAuthResponse(UserDetailsImpl principal) {
+    @Override
+    @Transactional
+    public AuthResponseDto refresh(RefreshTokenRequestDto request, String clientIp) {
+        String rawToken = request.getRefreshToken();
+        if (!jwtUtil.validateRefreshToken(rawToken)) {
+            throw new UnauthorizedException("INVALID_REFRESH_TOKEN", "Refresh token inválido o expirado");
+        }
+
+        UUID tokenId = jwtUtil.getJtiFromToken(rawToken);
+        RefreshTokenEntity currentToken = refreshTokenService.validateActive(rawToken, tokenId);
+
+        UserEntity user = userRepository.findById(currentToken.getUser().getId())
+                .orElseThrow(() -> new UnauthorizedException("INVALID_REFRESH_TOKEN", "Refresh token inválido o expirado"));
+
+        UUID newTokenId = UUID.randomUUID();
+        String newRawRefreshToken = jwtUtil.generateRefreshToken(user.getId(), newTokenId);
+        refreshTokenService.issue(user, newTokenId, newRawRefreshToken, clientIp);
+        refreshTokenService.rotate(currentToken, newTokenId);
+
+        UserDetailsImpl principal = UserDetailsImpl.build(user);
         String accessToken = jwtUtil.generateAccessToken(principal);
         long expiresIn = jwtUtil.getAccessExpirationMillis() / 1000;
-        return new AuthResponseDto(accessToken, "Bearer", expiresIn, AuthUserDto.from(principal));
+        return new AuthResponseDto(accessToken, "Bearer", expiresIn, newRawRefreshToken, AuthUserDto.from(principal));
+    }
+
+    @Override
+    @Transactional
+    public void logout(RefreshTokenRequestDto request) {
+        String rawToken = request.getRefreshToken();
+        if (!jwtUtil.validateRefreshToken(rawToken)) {
+            return;
+        }
+        refreshTokenService.revokeIfActive(jwtUtil.getJtiFromToken(rawToken));
+    }
+
+    private AuthResponseDto buildAuthResponse(UserEntity user, String clientIp) {
+        UserDetailsImpl principal = UserDetailsImpl.build(user);
+        String accessToken = jwtUtil.generateAccessToken(principal);
+        long expiresIn = jwtUtil.getAccessExpirationMillis() / 1000;
+
+        UUID tokenId = UUID.randomUUID();
+        String rawRefreshToken = jwtUtil.generateRefreshToken(user.getId(), tokenId);
+        refreshTokenService.issue(user, tokenId, rawRefreshToken, clientIp);
+
+        return new AuthResponseDto(accessToken, "Bearer", expiresIn, rawRefreshToken, AuthUserDto.from(principal));
     }
 
     private String normalizeEmail(String email) {
