@@ -13,10 +13,18 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> 
 
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 
+    /*
+     * :name/:active aparecen una sola vez cada uno, siempre en contexto
+     * tipado. El patrón "(:param IS NULL OR ...)" usa cada parámetro dos
+     * veces y puede hacer que Postgres/JDBC falle con "could not determine
+     * data type of parameter $N" una vez que Hibernate empieza a preparar
+     * la sentencia del lado del servidor (ver events/repositories/
+     * EventRepository.java, donde sí llegó a fallar en vivo).
+     */
     @Query("""
             SELECT c FROM CategoryEntity c
-            WHERE (:name IS NULL OR :name = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')))
-              AND (:active IS NULL OR c.active = :active)
+            WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', COALESCE(:name, ''), '%'))
+              AND c.active = COALESCE(:active, c.active)
             """)
     Page<CategoryEntity> search(@Param("name") String name, @Param("active") Boolean active, Pageable pageable);
 }

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -86,6 +87,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
         return build(HttpStatus.FORBIDDEN, "FORBIDDEN", "No tiene permisos para realizar esta acción", request);
+    }
+
+    /**
+     * @Version optimista (ej. EventEntity, RegistrationEntity): dos updates
+     * concurrentes sobre la misma fila, el segundo en llegar pierde. Sin este
+     * handler caería en el catch-all genérico (500) en vez de un 409 claro.
+     */
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLocking(ObjectOptimisticLockingFailureException ex,
+                                                                    HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "CONCURRENT_MODIFICATION",
+                "El recurso fue modificado por otro proceso, vuelve a intentarlo", request);
     }
 
     @ExceptionHandler(AuthenticationException.class)
