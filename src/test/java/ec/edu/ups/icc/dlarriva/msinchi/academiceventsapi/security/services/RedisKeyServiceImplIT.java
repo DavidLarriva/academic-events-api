@@ -31,26 +31,26 @@ class RedisKeyServiceImplIT {
     void setAndGetRoundTripWithTtl() {
         String key = "smoke-" + UUID.randomUUID();
 
-        redisKeyService.set(RedisKeyPrefix.RATE_LIMIT_IP, key, "hello", Duration.ofSeconds(30));
+        redisKeyService.set(RedisKeyPrefix.RATE_LIMIT_PUBLIC, key, "hello", Duration.ofSeconds(30));
 
-        assertEquals(Optional.of("hello"), redisKeyService.get(RedisKeyPrefix.RATE_LIMIT_IP, key));
-        assertTrue(redisKeyService.exists(RedisKeyPrefix.RATE_LIMIT_IP, key));
+        assertEquals(Optional.of("hello"), redisKeyService.get(RedisKeyPrefix.RATE_LIMIT_PUBLIC, key));
+        assertTrue(redisKeyService.exists(RedisKeyPrefix.RATE_LIMIT_PUBLIC, key));
 
-        redisKeyService.delete(RedisKeyPrefix.RATE_LIMIT_IP, key);
-        assertFalse(redisKeyService.exists(RedisKeyPrefix.RATE_LIMIT_IP, key));
+        redisKeyService.delete(RedisKeyPrefix.RATE_LIMIT_PUBLIC, key);
+        assertFalse(redisKeyService.exists(RedisKeyPrefix.RATE_LIMIT_PUBLIC, key));
     }
 
     @Test
     void incrementSetsTtlOnlyOnFirstWriteAndKeepsCounting() {
         String key = "counter-" + UUID.randomUUID();
 
-        long first = redisKeyService.increment(RedisKeyPrefix.RATE_LIMIT_USER, key, Duration.ofSeconds(30));
-        long second = redisKeyService.increment(RedisKeyPrefix.RATE_LIMIT_USER, key, Duration.ofSeconds(30));
+        long first = redisKeyService.increment(RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, key, Duration.ofSeconds(30));
+        long second = redisKeyService.increment(RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, key, Duration.ofSeconds(30));
 
         assertEquals(1L, first);
         assertEquals(2L, second);
 
-        redisKeyService.delete(RedisKeyPrefix.RATE_LIMIT_USER, key);
+        redisKeyService.delete(RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, key);
     }
 
     @Test

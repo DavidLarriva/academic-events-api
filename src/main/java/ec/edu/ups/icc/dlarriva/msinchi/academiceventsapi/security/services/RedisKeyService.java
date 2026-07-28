@@ -31,4 +31,10 @@ public interface RedisKeyService {
      * posteriores el TTL restante no se toca (ventana fija).
      */
     long increment(RedisKeyPrefix prefix, String key, Duration ttl);
+
+    /**
+     * Segundos restantes hasta que la clave expire (vacío si no existe).
+     * Se usa para calcular el header Retry-After cuando se supera un límite.
+     */
+    Optional<Long> getExpireSeconds(RedisKeyPrefix prefix, String key);
 }

@@ -45,16 +45,19 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final LoginAttemptService loginAttemptService;
 
     public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
                             PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
-                            JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
+                            JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
+                            LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @Override
@@ -89,17 +92,22 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponseDto login(LoginRequestDto request, String clientIp) {
         String email = normalizeEmail(request.getEmail());
+        loginAttemptService.checkNotBlocked(clientIp, email);
+
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, request.getPassword()));
         } catch (AuthenticationException e) {
+            loginAttemptService.recordFailure(clientIp, email);
             throw new UnauthorizedException("INVALID_CREDENTIALS", "Correo o contraseña incorrectos");
         }
 
         UserDetailsImpl principal = (UserDetailsImpl) authentication.getPrincipal();
         UserEntity user = userRepository.findById(principal.getId())
                 .orElseThrow(() -> new UnauthorizedException("INVALID_CREDENTIALS", "Correo o contraseña incorrectos"));
+
+        loginAttemptService.recordSuccess(clientIp, email);
         return buildAuthResponse(user, clientIp);
     }
 

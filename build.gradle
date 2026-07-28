@@ -34,8 +34,12 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
-	// Rate limiting
-	implementation 'com.bucket4j:bucket4j_jdk17-core:8.19.0'
+	// Rate limiting: AOP para el aspecto @RateLimit (el contador en sí usa
+	// RedisKeyService/INCR+EXPIRE, no Bucket4j — ver security/ratelimit/).
+	// spring-boot-starter-aop no existe para Boot 4 (descontinuado tras la
+	// 4.0.0-M2); AopAutoConfiguration solo necesita aspectjweaver en el
+	// classpath (spring-aop ya viene transitivamente con Spring Security).
+	implementation 'org.aspectj:aspectjweaver'
 
 	// Documentación OpenAPI / Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'

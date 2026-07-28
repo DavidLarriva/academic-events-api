@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RedisKeyServiceImpl implements RedisKeyService {
@@ -49,6 +50,15 @@ public class RedisKeyServiceImpl implements RedisKeyService {
             redisTemplate.expire(fullKey, ttl);
         }
         return count;
+    }
+
+    @Override
+    public Optional<Long> getExpireSeconds(RedisKeyPrefix prefix, String key) {
+        Long seconds = redisTemplate.getExpire(buildKey(prefix, key), TimeUnit.SECONDS);
+        if (seconds == null || seconds < 0) {
+            return Optional.empty();
+        }
+        return Optional.of(seconds);
     }
 
     private void requireTtl(Duration ttl) {
