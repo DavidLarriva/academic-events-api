@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface RegistrationRepository extends JpaRepository<RegistrationEntity, Long> {
@@ -40,4 +42,24 @@ public interface RegistrationRepository extends JpaRepository<RegistrationEntity
             """)
     Page<RegistrationEntity> search(@Param("eventId") Long eventId, @Param("participantId") Long participantId,
             @Param("organizerId") Long organizerId, @Param("status") RegistrationStatus status, Pageable pageable);
+
+    /**
+     * Para reportes (módulo reports/): sin paginar, JOIN FETCH del
+     * participante para no golpear la BD fila por fila al armar el PDF/Excel
+     * (nombre/correo de cada inscrito). status/from/to siguen el mismo
+     * patrón COALESCE que search(); ReportFilterDto ya trae status=CONFIRMED
+     * por defecto, así que acá casi nunca llega null, pero se mantiene el
+     * patrón por consistencia y por si alguna vez se llama distinto.
+     */
+    @Query("""
+            SELECT r FROM RegistrationEntity r
+            JOIN FETCH r.participant
+            WHERE r.event.id = :eventId
+              AND r.status = COALESCE(:status, r.status)
+              AND r.registeredAt >= COALESCE(:from, r.registeredAt)
+              AND r.registeredAt <= COALESCE(:to, r.registeredAt)
+            ORDER BY r.registeredAt ASC
+            """)
+    List<RegistrationEntity> findForReport(@Param("eventId") Long eventId, @Param("status") RegistrationStatus status,
+            @Param("from") OffsetDateTime from, @Param("to") OffsetDateTime to);
 }

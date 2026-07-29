@@ -46,7 +46,11 @@ dependencies {
 
 	// Reportes: Excel y PDF
 	implementation 'org.apache.poi:poi-ooxml:5.5.1'
-	implementation 'com.github.librepdf:openpdf:3.0.5'
+	// OpenPDF 3.x compila a bytecode Java 21 (class file 65) y no puede
+	// usarse con el toolchain Java 17 del proyecto ("cannot access ...:
+	// class file has wrong version 65.0, should be 61.0"); 2.0.5 sí compila
+	// para Java 17 y mantiene el paquete clásico com.lowagie.text.
+	implementation 'com.github.librepdf:openpdf:2.0.5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-redis-test'
