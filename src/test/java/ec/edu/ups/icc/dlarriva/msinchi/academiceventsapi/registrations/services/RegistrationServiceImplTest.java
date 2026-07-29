@@ -118,6 +118,33 @@ class RegistrationServiceImplTest {
     }
 
     @Test
+    void createRejectsWhenRegistrationPeriodHasNotStartedYet() {
+        EventEntity event = publishedEventWithCapacity(30, 30);
+        event.setRegistrationStartAt(OffsetDateTime.now().plusDays(1));
+        when(eventRepository.findByIdAndDeletedFalse(EVENT_ID)).thenReturn(Optional.of(event));
+
+        BadRequestException ex = assertThrows(BadRequestException.class,
+                () -> registrationService.create(createDto(), principal(PARTICIPANT_ID, RoleName.PARTICIPANT)));
+
+        assertEquals("EVENT_REGISTRATION_NOT_STARTED", ex.getCode());
+        verify(registrationRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void createRejectsWhenRegistrationPeriodAlreadyClosed() {
+        EventEntity event = publishedEventWithCapacity(30, 30);
+        event.setRegistrationStartAt(OffsetDateTime.now().minusDays(10));
+        event.setRegistrationEndAt(OffsetDateTime.now().minusDays(1));
+        when(eventRepository.findByIdAndDeletedFalse(EVENT_ID)).thenReturn(Optional.of(event));
+
+        BadRequestException ex = assertThrows(BadRequestException.class,
+                () -> registrationService.create(createDto(), principal(PARTICIPANT_ID, RoleName.PARTICIPANT)));
+
+        assertEquals("EVENT_REGISTRATION_CLOSED", ex.getCode());
+        verify(registrationRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
     void createRejectsDoubleActiveRegistration() {
         EventEntity event = publishedEventWithCapacity(30, 30);
         when(eventRepository.findByIdAndDeletedFalse(EVENT_ID)).thenReturn(Optional.of(event));
@@ -325,6 +352,20 @@ class RegistrationServiceImplTest {
 
         assertEquals("EVENT_ALREADY_FINISHED", ex.getCode());
         verify(eventRepository, never()).save(any());
+    }
+
+    @Test
+    void updateStatusRejectsExplicitAttemptToGoBackToPending() {
+        EventEntity event = publishedEventWithCapacity(30, 12);
+        RegistrationEntity registration = registrationOf(event, RegistrationStatus.REJECTED);
+        when(registrationRepository.findById(REGISTRATION_ID)).thenReturn(Optional.of(registration));
+
+        BadRequestException ex = assertThrows(BadRequestException.class,
+                () -> registrationService.updateStatus(REGISTRATION_ID, statusDto(RegistrationStatus.PENDING),
+                        principal(ORGANIZER_ID, RoleName.ORGANIZER)));
+
+        assertEquals("INVALID_STATUS_TRANSITION", ex.getCode());
+        verify(registrationRepository, never()).saveAndFlush(any());
     }
 
     // ---------------------------------------------------------------

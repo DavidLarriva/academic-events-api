@@ -59,6 +59,19 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Integration tests (@SpringBootTest) contra Postgres real efímero, no H2:
+	// el V1__initial_schema_and_data.sql del profesor usa tipos/constraints
+	// específicos de Postgres (TIMESTAMPTZ, triggers) que H2 no replica fielmente
+	// (decisión acordada con el usuario). Versiones gestionadas por el BOM de
+	// Spring Boot (io.spring.dependency-management), sin fijarlas a mano.
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	// Testcontainers 2.x (gestionado por el BOM de Spring Boot 4.0.7, sin fijar
+	// versión a mano) renombró los módulos sueltos con prefijo "testcontainers-"
+	// (antes "org.testcontainers:junit-jupiter"/"...:postgresql" en la serie 1.x).
+	testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+	testImplementation 'org.testcontainers:testcontainers-postgresql'
+	testImplementation 'com.jayway.jsonpath:json-path'
 }
 
 tasks.named('test') {
