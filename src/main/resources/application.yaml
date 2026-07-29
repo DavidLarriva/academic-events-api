@@ -5,6 +5,15 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        # Todas las columnas temporales son TIMESTAMPTZ (V1__initial_schema_and_data.sql)
+        # y el driver de Postgres ya normaliza esas lecturas a UTC sin esto
+        # (verificado en runtime), pero se deja explícito para no depender
+        # implícitamente de ese comportamiento del driver ni de la zona
+        # horaria por defecto de la JVM donde corra la app (docs/instrucciones.md §14).
+        jdbc:
+          time_zone: UTC
   data:
     redis:
       timeout: 2000ms
