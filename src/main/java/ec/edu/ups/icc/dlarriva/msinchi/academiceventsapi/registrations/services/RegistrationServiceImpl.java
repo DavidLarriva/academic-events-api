@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.services;
 
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.audit.services.AuditService;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.dtos.PagedResponseDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.dtos.PaginationDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.domain.BadRequestException;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -65,15 +67,17 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final UserRepository userRepository;
     private final OwnershipValidator ownershipValidator;
     private final EntityManager entityManager;
+    private final AuditService auditService;
 
     public RegistrationServiceImpl(RegistrationRepository registrationRepository, EventRepository eventRepository,
                                     UserRepository userRepository, OwnershipValidator ownershipValidator,
-                                    EntityManager entityManager) {
+                                    EntityManager entityManager, AuditService auditService) {
         this.registrationRepository = registrationRepository;
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
         this.ownershipValidator = ownershipValidator;
         this.entityManager = entityManager;
+        this.auditService = auditService;
     }
 
     @Override
@@ -183,6 +187,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Transactional
     public RegistrationResponseDto updateStatus(Long id, UpdateRegistrationStatusDto dto, UserDetailsImpl currentUser) {
         RegistrationEntity entity = findEntityOrThrow(id);
+        RegistrationStatus previousStatus = entity.getStatus();
 
         switch (dto.getStatus()) {
             case CONFIRMED -> confirm(entity, currentUser);
@@ -192,7 +197,10 @@ public class RegistrationServiceImpl implements RegistrationService {
                     "No se puede volver una inscripción a PENDING mediante este endpoint");
         }
 
-        return RegistrationMapper.toResponse(RegistrationMapper.toModel(saveAndRefresh(entity)));
+        RegistrationEntity saved = saveAndRefresh(entity);
+        auditService.recordSuccess(currentUser.getId(), "REGISTRATION_STATUS_CHANGED", "REGISTRATION", saved.getId(),
+                Map.of("status", previousStatus.name()), Map.of("status", saved.getStatus().name()));
+        return RegistrationMapper.toResponse(RegistrationMapper.toModel(saved));
     }
 
     private void confirm(RegistrationEntity entity, UserDetailsImpl currentUser) {

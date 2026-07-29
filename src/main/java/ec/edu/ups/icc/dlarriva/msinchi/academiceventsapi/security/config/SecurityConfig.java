@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.config;
 
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.filters.CorrelationIdFilter;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.filters.JwtAuthenticationEntryPoint;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.filters.JwtAuthenticationFilter;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.services.UserDetailsServiceImpl;
@@ -51,16 +52,18 @@ public class SecurityConfig {
             List.of("Authorization", "Content-Type");
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final CorrelationIdFilter correlationIdFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final CorsProperties corsProperties;
     private final Environment environment;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService,
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, CorrelationIdFilter correlationIdFilter,
                            JwtAuthenticationFilter jwtAuthenticationFilter,
                            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
                            CorsProperties corsProperties, Environment environment) {
         this.userDetailsService = userDetailsService;
+        this.correlationIdFilter = correlationIdFilter;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.corsProperties = corsProperties;
@@ -123,7 +126,11 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                // Orden importa: JwtAuthenticationFilter.class recién queda "conocido"
+                // (con posición registrada) después de esta primera llamada, así que
+                // solo entonces se lo puede usar como referencia en la siguiente.
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(correlationIdFilter, JwtAuthenticationFilter.class);
         return http.build();
     }
 }

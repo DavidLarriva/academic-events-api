@@ -26,3 +26,10 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+logging:
+  pattern:
+    # Inyecta el correlationId (CorrelationIdFilter) en todas las líneas de
+    # log de una request, para poder cruzarlas con audit_logs.correlation_id
+    # sin reemplazar el patrón por defecto de Spring Boot.
+    level: "%5p [%X{correlationId}]"

@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.services;
 
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.audit.services.AuditService;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.categories.entities.CategoryEntity;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.categories.repositories.CategoryRepository;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.dtos.PagedResponseDto;
@@ -31,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -56,16 +58,19 @@ public class EventServiceImpl implements EventService {
     private final RegistrationRepository registrationRepository;
     private final OwnershipValidator ownershipValidator;
     private final EntityManager entityManager;
+    private final AuditService auditService;
 
     public EventServiceImpl(EventRepository eventRepository, CategoryRepository categoryRepository,
                              UserRepository userRepository, RegistrationRepository registrationRepository,
-                             OwnershipValidator ownershipValidator, EntityManager entityManager) {
+                             OwnershipValidator ownershipValidator, EntityManager entityManager,
+                             AuditService auditService) {
         this.eventRepository = eventRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.registrationRepository = registrationRepository;
         this.ownershipValidator = ownershipValidator;
         this.entityManager = entityManager;
+        this.auditService = auditService;
     }
 
     @Override
@@ -111,7 +116,10 @@ public class EventServiceImpl implements EventService {
         entity.setOrganizer(organizer);
         entity.setCategory(category);
 
-        return EventMapper.toResponse(EventMapper.toModel(saveAndRefresh(entity)));
+        EventEntity saved = saveAndRefresh(entity);
+        auditService.recordSuccess(currentUser.getId(), "EVENT_CREATED", "EVENT", saved.getId(), null,
+                Map.of("title", saved.getTitle(), "status", saved.getStatus().name()));
+        return EventMapper.toResponse(EventMapper.toModel(saved));
     }
 
     @Override
@@ -157,6 +165,9 @@ public class EventServiceImpl implements EventService {
 
         entity.setDeleted(true);
         eventRepository.save(entity);
+
+        auditService.recordSuccess(currentUser.getId(), "EVENT_DELETED", "EVENT", entity.getId(),
+                Map.of("deleted", false), Map.of("deleted", true));
     }
 
     private EventEntity findEntityOrThrow(Long id) {
