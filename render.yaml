@@ -1,0 +1,117 @@
+# Blueprint de Render (docs/instrucciones.md §15, contexto-materia.md §17.8).
+#
+# Este archivo NO despliega nada por sí solo: Render lo lee recién cuando
+# vos conectás el repo como "Blueprint" en el dashboard. autoDeployTrigger
+# queda en "off" a propósito para que el primer deploy real lo dispares vos
+# manualmente cuando quieras (pedido explícito: no ejecutar el deploy real).
+#
+# Pasos manuales de una sola vez, variables a completar (sync: false) y el
+# porqué de cada decisión: ver docs/deploy-render.md.
+
+databases:
+  - name: academic-events-db
+    databaseName: academic_events_db # mismo nombre que crea 00_create_database.sql;
+    # en Render NO hace falta correr ese script: Render crea esta base
+    # automáticamente al aprovisionar la instancia (ver docs/deploy-render.md).
+    user: academic_events_app
+    plan: free # expira a los 30 días + 14 de gracia (ver docs/deploy-render.md)
+    region: oregon
+    postgresMajorVersion: "17"
+
+services:
+  # --- Redis (Render lo llama "Key Value", corre Valkey — compatible con
+  #     clientes Redis, cero cambios de código: docs/deploy-render.md) ---
+  - type: keyvalue
+    name: academic-events-redis
+    plan: free
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: [] # sin acceso externo: solo servicios internos de Render
+
+  # --- Backend (Spring Boot vía Dockerfile) ---
+  - type: web
+    name: academic-events-api
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/actuator/health
+    autoDeployTrigger: "off" # YAML interpreta "off" (sin comillas) como booleano; se cita a propósito
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # --- PostgreSQL ---
+      # Flyway aplica V1__initial_schema_and_data.sql solo, automáticamente,
+      # en el primer arranque contra esta base (comportamiento default de
+      # Spring Boot, ya validado en dev — sin pasos manuales adicionales).
+      - key: DB_HOST
+        fromDatabase:
+          name: academic-events-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: academic-events-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: academic-events-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: academic-events-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: academic-events-db
+          property: password
+
+      # --- Redis / Key Value ---
+      - key: REDIS_HOST
+        fromService:
+          type: keyvalue
+          name: academic-events-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: keyvalue
+          name: academic-events-redis
+          property: port
+      - key: REDIS_PASSWORD
+        sync: false # Render no expone "password" vía fromService para Key
+        # Value (solo host/port/connectionString) — completar a mano una
+        # sola vez desde el dashboard del servicio Key Value si aplica
+        # (detalle en docs/deploy-render.md; puede quedar vacío si las
+        # conexiones internas de Render no exigen auth).
+
+      # --- JWT (HS256) ---
+      - key: JWT_SECRET
+        generateValue: true # Render genera un valor aleatorio seguro (256 bits)
+      - key: JWT_ACCESS_EXPIRATION
+        value: "900000" # 15 min, ms
+      - key: JWT_REFRESH_EXPIRATION
+        value: "604800000" # 7 días, ms
+
+      # --- CORS ---
+      - key: ALLOWED_ORIGINS
+        sync: false # dominio(s) real(es) del frontend desplegado, separados
+        # por coma — no se puede adivinar de antemano.
+
+      # --- Swagger/OpenAPI protegido en prod (docs/instrucciones.md §11) ---
+      - key: SWAGGER_USERNAME
+        sync: false
+      - key: SWAGGER_PASSWORD
+        sync: false
+
+      # --- Memoria de la JVM (plan Free = 512MB, confirmado con el usuario) ---
+      # Sin -Xmx hardcodeado en el Dockerfile: JAVA_TOOL_OPTIONS es lo que
+      # Java recoge automáticamente al arrancar. Valores VERIFICADOS corriendo
+      # esta misma imagen con --memory=512m (límite duro, igual que Render
+      # Free): con 96MB de metaspace la app moría con OutOfMemoryError al
+      # arrancar (Spring Security + AOP + Hibernate generan más clases en
+      # runtime de lo que ese límite alcanzaba); con estos valores arranca
+      # OK y queda estable en ~335MB/512MB tras varias requests
+      # (docs/deploy-render.md tiene el detalle completo de la prueba).
+      - key: JAVA_TOOL_OPTIONS
+        value: "-Xms128m -Xmx256m -XX:MaxMetaspaceSize=160m -XX:+UseSerialGC -XX:MaxDirectMemorySize=32m"

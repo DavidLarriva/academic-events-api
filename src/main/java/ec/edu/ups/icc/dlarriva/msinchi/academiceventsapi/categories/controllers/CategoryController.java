@@ -8,8 +8,14 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.categories.services.Cat
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.dtos.PagedResponseDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.dtos.PaginationDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.annotations.RateLimit;
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.config.OpenApiConfig;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.enums.RateLimitKeyStrategy;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.enums.RedisKeyPrefix;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
  * activas, se agrega ahí un endpoint de lectura propio para ese caso de
  * uso, sin relajar este.
  */
+@Tag(name = "Categorías", description = "CRUD de categorías de eventos (solo ADMIN)")
+@SecurityRequirement(name = OpenApiConfig.SECURITY_SCHEME_NAME)
 @RestController
 @RequestMapping("/categories")
 @PreAuthorize("hasRole('ADMIN')")
@@ -42,6 +50,11 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @Operation(summary = "Listar categorías", description = "Paginado, con filtros por nombre (substring) y active.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Página de categorías"),
+            @ApiResponse(responseCode = "403", description = "No es ADMIN")
+    })
     @GetMapping
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
             keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)
@@ -51,6 +64,11 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.findPage(filters, pagination));
     }
 
+    @Operation(summary = "Obtener una categoría por id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Categoría encontrada"),
+            @ApiResponse(responseCode = "404", description = "Categoría no encontrada")
+    })
     @GetMapping("/{id}")
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
             keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)
@@ -58,6 +76,12 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.findOne(id));
     }
 
+    @Operation(summary = "Crear categoría")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Categoría creada"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "409", description = "Ya existe una categoría con ese nombre")
+    })
     @PostMapping
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
             keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)
@@ -65,6 +89,13 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.create(dto));
     }
 
+    @Operation(summary = "Actualizar categoría (reemplazo total)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Categoría actualizada"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "404", description = "Categoría no encontrada"),
+            @ApiResponse(responseCode = "409", description = "Ya existe otra categoría con ese nombre")
+    })
     @PutMapping("/{id}")
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
             keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)
@@ -73,6 +104,11 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.update(id, dto));
     }
 
+    @Operation(summary = "Eliminar categoría (lógico)", description = "Marca active=false; no borra la fila.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Categoría desactivada"),
+            @ApiResponse(responseCode = "404", description = "Categoría no encontrada")
+    })
     @DeleteMapping("/{id}")
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
             keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)

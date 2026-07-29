@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.services;
 
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.audit.services.AuditService;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.categories.entities.CategoryEntity;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.categories.repositories.CategoryRepository;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.domain.BadRequestException;
@@ -56,6 +57,8 @@ class EventServiceImplTest {
     private RegistrationRepository registrationRepository;
     @Mock
     private EntityManager entityManager;
+    @Mock
+    private AuditService auditService;
 
     private final OwnershipValidator ownershipValidator = new OwnershipValidatorImpl();
 
@@ -64,7 +67,7 @@ class EventServiceImplTest {
     @BeforeEach
     void setUp() {
         eventService = new EventServiceImpl(eventRepository, categoryRepository, userRepository,
-                registrationRepository, ownershipValidator, entityManager);
+                registrationRepository, ownershipValidator, entityManager, auditService);
     }
 
     @Test

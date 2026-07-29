@@ -5,6 +5,15 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        # Todas las columnas temporales son TIMESTAMPTZ (V1__initial_schema_and_data.sql)
+        # y el driver de Postgres ya normaliza esas lecturas a UTC sin esto
+        # (verificado en runtime), pero se deja explícito para no depender
+        # implícitamente de ese comportamiento del driver ni de la zona
+        # horaria por defecto de la JVM donde corra la app (docs/instrucciones.md §14).
+        jdbc:
+          time_zone: UTC
   data:
     redis:
       timeout: 2000ms
@@ -20,9 +29,23 @@ management:
     web:
       exposure:
         include: health,info,metrics
+  endpoint:
+    health:
+      # Explícito aunque coincide con el default de Actuator: /actuator/health
+      # público nunca debe filtrar detalles internos (DB/Redis, etc.),
+      # docs/instrucciones.md §12. El resto de /actuator/** sí puede mostrar
+      # detalle porque queda protegido con ADMIN en SecurityConfig.
+      show-details: never
 
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+logging:
+  pattern:
+    # Inyecta el correlationId (CorrelationIdFilter) en todas las líneas de
+    # log de una request, para poder cruzarlas con audit_logs.correlation_id
+    # sin reemplazar el patrón por defecto de Spring Boot.
+    level: "%5p [%X{correlationId}]"

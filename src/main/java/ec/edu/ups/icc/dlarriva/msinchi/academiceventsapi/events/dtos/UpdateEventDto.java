@@ -2,6 +2,7 @@ package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.dtos;
 
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.enums.EventModality;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.enums.EventStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,41 +20,53 @@ import java.time.OffsetDateTime;
  */
 public class UpdateEventDto {
 
+    @Schema(description = "Título público del evento", example = "Taller de seguridad con Spring Boot (actualizado)")
     @NotBlank
     @Size(max = 160)
     private String title;
 
+    @Schema(description = "Descripción detallada")
     @NotBlank
     private String description;
 
+    @Schema(description = "Modalidad: define qué combinación de location/virtualUrl es válida")
     @NotNull
     private EventModality modality;
 
+    @Schema(description = "Requerido si PRESENTIAL/HYBRID, prohibido si VIRTUAL", example = "Auditorio Principal")
     @Size(max = 200)
     private String location;
 
+    @Schema(description = "Requerido si VIRTUAL/HYBRID, prohibido si PRESENTIAL")
     @Size(max = 500)
     private String virtualUrl;
 
+    @Schema(description = "No puede bajar de los cupos ya CONFIRMED", example = "40")
     @NotNull
     @Min(1)
     private Integer capacity;
 
+    @Schema(description = "Inicio del periodo de inscripciones (UTC)")
     @NotNull
     private OffsetDateTime registrationStartAt;
 
+    @Schema(description = "Fin del periodo de inscripciones (UTC), <= startAt")
     @NotNull
     private OffsetDateTime registrationEndAt;
 
+    @Schema(description = "Inicio del evento (UTC)")
     @NotNull
     private OffsetDateTime startAt;
 
+    @Schema(description = "Fin del evento (UTC), posterior a startAt")
     @NotNull
     private OffsetDateTime endAt;
 
+    @Schema(description = "Estado del evento")
     @NotNull
     private EventStatus status;
 
+    @Schema(description = "Id de una categoría activa (o la misma que ya tenía el evento)", example = "1")
     @NotNull
     private Long categoryId;
 

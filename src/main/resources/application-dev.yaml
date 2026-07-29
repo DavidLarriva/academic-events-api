@@ -24,6 +24,13 @@ jwt:
 cors:
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
 
+# Solo tiene efecto en prod (SecurityConfig#swaggerFilterChain deja swagger
+# abierto en dev); se define igual para que el binding de SwaggerAuthProperties
+# no falle por falta de valores en este perfil.
+swagger:
+  username: ${SWAGGER_USERNAME:admin}
+  password: ${SWAGGER_PASSWORD:admin}
+
 logging:
   level:
     ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi: DEBUG

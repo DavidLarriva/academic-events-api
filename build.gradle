@@ -46,7 +46,11 @@ dependencies {
 
 	// Reportes: Excel y PDF
 	implementation 'org.apache.poi:poi-ooxml:5.5.1'
-	implementation 'com.github.librepdf:openpdf:3.0.5'
+	// OpenPDF 3.x compila a bytecode Java 21 (class file 65) y no puede
+	// usarse con el toolchain Java 17 del proyecto ("cannot access ...:
+	// class file has wrong version 65.0, should be 61.0"); 2.0.5 sí compila
+	// para Java 17 y mantiene el paquete clásico com.lowagie.text.
+	implementation 'com.github.librepdf:openpdf:2.0.5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-redis-test'
@@ -55,8 +59,27 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Integration tests (@SpringBootTest) contra Postgres real efímero, no H2:
+	// el V1__initial_schema_and_data.sql del profesor usa tipos/constraints
+	// específicos de Postgres (TIMESTAMPTZ, triggers) que H2 no replica fielmente
+	// (decisión acordada con el usuario). Versiones gestionadas por el BOM de
+	// Spring Boot (io.spring.dependency-management), sin fijarlas a mano.
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	// Testcontainers 2.x (gestionado por el BOM de Spring Boot 4.0.7, sin fijar
+	// versión a mano) renombró los módulos sueltos con prefijo "testcontainers-"
+	// (antes "org.testcontainers:junit-jupiter"/"...:postgresql" en la serie 1.x).
+	testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+	testImplementation 'org.testcontainers:testcontainers-postgresql'
+	testImplementation 'com.jayway.jsonpath:json-path'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// Nombre fijo para que el Dockerfile (docs/contexto-materia.md §17.4) pueda
+// referenciar build/libs/app.jar sin depender de `version` en el nombre.
+tasks.named('bootJar') {
+	archiveFileName = 'app.jar'
 }

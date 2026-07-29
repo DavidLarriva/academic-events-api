@@ -2,11 +2,17 @@ package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.respon
 
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Map;
 
+/**
+ * timestamp en OffsetDateTime/UTC explícito (docs/instrucciones.md §14),
+ * igual que el resto de la API — no LocalDateTime: sin offset, un cliente no
+ * puede saber si esa hora es UTC o la hora local del servidor.
+ */
 public record ErrorResponse(
-        LocalDateTime timestamp,
+        OffsetDateTime timestamp,
         int status,
         String error,
         String code,
@@ -21,7 +27,7 @@ public record ErrorResponse(
 
     public static ErrorResponse of(HttpStatus status, String code, String message, String path,
                                     Map<String, String> details) {
-        return new ErrorResponse(LocalDateTime.now(), status.value(), status.getReasonPhrase(),
+        return new ErrorResponse(OffsetDateTime.now(ZoneOffset.UTC), status.value(), status.getReasonPhrase(),
                 code, message, path, details);
     }
 }

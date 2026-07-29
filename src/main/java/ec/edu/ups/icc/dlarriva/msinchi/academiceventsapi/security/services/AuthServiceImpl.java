@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.services;
 
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.audit.services.AuditService;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.domain.ConflictException;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.domain.UnauthorizedException;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.dtos.AuthResponseDto;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,11 +48,12 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final LoginAttemptService loginAttemptService;
+    private final AuditService auditService;
 
     public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
                             PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
                             JwtUtil jwtUtil, RefreshTokenService refreshTokenService,
-                            LoginAttemptService loginAttemptService) {
+                            LoginAttemptService loginAttemptService, AuditService auditService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -58,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
         this.loginAttemptService = loginAttemptService;
+        this.auditService = auditService;
     }
 
     @Override
@@ -86,6 +90,8 @@ public class AuthServiceImpl implements AuthService {
             throw new ConflictException("EMAIL_ALREADY_REGISTERED", "El correo ya está registrado");
         }
 
+        auditService.recordSuccess(user.getId(), "REGISTER_SUCCESS", "USER", user.getId(), null,
+                Map.of("email", email));
         return buildAuthResponse(user, clientIp);
     }
 
@@ -100,6 +106,10 @@ public class AuthServiceImpl implements AuthService {
                     new UsernamePasswordAuthenticationToken(email, request.getPassword()));
         } catch (AuthenticationException e) {
             loginAttemptService.recordFailure(clientIp, email);
+            // actor=null a propósito, igual en credencial inválida que en
+            // correo inexistente: nunca confirmamos quién intentó (mismo
+            // espíritu que el mensaje genérico de error, instrucciones.md §4).
+            auditService.recordFailure(null, "LOGIN_FAILED", "USER", null, Map.of("email", email));
             throw new UnauthorizedException("INVALID_CREDENTIALS", "Correo o contraseña incorrectos");
         }
 
@@ -108,6 +118,8 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UnauthorizedException("INVALID_CREDENTIALS", "Correo o contraseña incorrectos"));
 
         loginAttemptService.recordSuccess(clientIp, email);
+        auditService.recordSuccess(user.getId(), "LOGIN_SUCCESS", "USER", user.getId(), null,
+                Map.of("email", email));
         return buildAuthResponse(user, clientIp);
     }
 
@@ -130,6 +142,9 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenService.issue(user, newTokenId, newRawRefreshToken, clientIp);
         refreshTokenService.rotate(currentToken, newTokenId);
 
+        auditService.recordSuccess(user.getId(), "REFRESH_TOKEN_ROTATED", "USER", user.getId(),
+                Map.of("tokenId", tokenId.toString()), Map.of("tokenId", newTokenId.toString()));
+
         UserDetailsImpl principal = UserDetailsImpl.build(user);
         String accessToken = jwtUtil.generateAccessToken(principal);
         long expiresIn = jwtUtil.getAccessExpirationMillis() / 1000;
@@ -143,7 +158,10 @@ public class AuthServiceImpl implements AuthService {
         if (!jwtUtil.validateRefreshToken(rawToken)) {
             return;
         }
-        refreshTokenService.revokeIfActive(jwtUtil.getJtiFromToken(rawToken));
+        UUID tokenId = jwtUtil.getJtiFromToken(rawToken);
+        Long userId = jwtUtil.getUserIdFromToken(rawToken);
+        refreshTokenService.revokeIfActive(tokenId);
+        auditService.recordSuccess(userId, "LOGOUT", "USER", userId, null, Map.of("tokenId", tokenId.toString()));
     }
 
     private AuthResponseDto buildAuthResponse(UserEntity user, String clientIp) {

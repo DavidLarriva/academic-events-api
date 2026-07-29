@@ -1,6 +1,7 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.dtos;
 
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.enums.EventModality;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,38 +17,50 @@ import java.time.OffsetDateTime;
  */
 public class CreateEventDto {
 
+    @Schema(description = "Título público del evento", example = "Taller de seguridad con Spring Boot")
     @NotBlank
     @Size(max = 160)
     private String title;
 
+    @Schema(description = "Descripción detallada", example = "Construcción de una API REST segura con JWT y roles.")
     @NotBlank
     private String description;
 
+    @Schema(description = "Modalidad: define qué combinación de location/virtualUrl es válida")
     @NotNull
     private EventModality modality;
 
+    @Schema(description = "Requerido si PRESENTIAL/HYBRID, prohibido si VIRTUAL", example = "Auditorio Principal")
     @Size(max = 200)
     private String location;
 
+    @Schema(description = "Requerido si VIRTUAL/HYBRID, prohibido si PRESENTIAL",
+            example = "https://meet.example.test/spring-security")
     @Size(max = 500)
     private String virtualUrl;
 
+    @Schema(description = "Cupo total; available_capacity nace igual a este valor", example = "40")
     @NotNull
     @Min(1)
     private Integer capacity;
 
+    @Schema(description = "Inicio del periodo de inscripciones (UTC)", example = "2026-08-01T00:00:00Z")
     @NotNull
     private OffsetDateTime registrationStartAt;
 
+    @Schema(description = "Fin del periodo de inscripciones (UTC), <= startAt", example = "2026-08-15T23:59:59Z")
     @NotNull
     private OffsetDateTime registrationEndAt;
 
+    @Schema(description = "Inicio del evento (UTC)", example = "2026-08-20T15:00:00Z")
     @NotNull
     private OffsetDateTime startAt;
 
+    @Schema(description = "Fin del evento (UTC), posterior a startAt", example = "2026-08-20T19:00:00Z")
     @NotNull
     private OffsetDateTime endAt;
 
+    @Schema(description = "Id de una categoría activa", example = "1")
     @NotNull
     private Long categoryId;
 
