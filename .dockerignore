@@ -1,0 +1,21 @@
+# docs/contexto-materia.md §17.5 — NO excluir gradlew, gradle/, build.gradle,
+# settings.gradle ni src/: el builder del Dockerfile los necesita.
+
+.gradle/
+build/
+.git/
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+.env
+.env.*
+!.env.example
+
+*.log
+
+# Documentación y assets que no forman parte del build ni del runtime.
+docs/
+00_create_database.sql
+README.md

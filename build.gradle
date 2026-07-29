@@ -77,3 +77,9 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Nombre fijo para que el Dockerfile (docs/contexto-materia.md §17.4) pueda
+// referenciar build/libs/app.jar sin depender de `version` en el nombre.
+tasks.named('bootJar') {
+	archiveFileName = 'app.jar'
+}
