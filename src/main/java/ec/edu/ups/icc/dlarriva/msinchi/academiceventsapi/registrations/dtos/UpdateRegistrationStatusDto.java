@@ -1,6 +1,7 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.dtos;
 
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.enums.RegistrationStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -11,6 +12,8 @@ import jakarta.validation.constraints.NotNull;
  */
 public class UpdateRegistrationStatusDto {
 
+    @Schema(description = "Estado destino: CONFIRMED/REJECTED (organizer/admin) o CANCELLED (participante/admin)",
+            example = "CONFIRMED")
     @NotNull
     private RegistrationStatus status;
 

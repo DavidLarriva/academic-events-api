@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.dtos;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class RefreshTokenRequestDto {
 
+    @Schema(description = "Refresh token JWT recibido en el login/refresh anterior")
     @NotBlank
     private String refreshToken;
 

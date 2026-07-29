@@ -8,9 +8,15 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.dtos.Regi
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.dtos.UpdateRegistrationStatusDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.services.RegistrationService;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.annotations.RateLimit;
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.config.OpenApiConfig;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.enums.RateLimitKeyStrategy;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.enums.RedisKeyPrefix;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.services.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +43,8 @@ import org.springframework.web.bind.annotation.RestController;
  * status pedido, si quien llama tiene ownership para esa transición
  * específica.
  */
+@Tag(name = "Inscripciones", description = "Flujo de 4 estados (PENDING/CONFIRMED/REJECTED/CANCELLED) con cupos")
+@SecurityRequirement(name = OpenApiConfig.SECURITY_SCHEME_NAME)
 @RestController
 @RequestMapping("/registrations")
 public class RegistrationController {
@@ -47,6 +55,11 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
+    @Operation(summary = "Listar inscripciones", description = "Visibilidad scoped por rol: PARTICIPANT ve solo las "
+            + "suyas, ORGANIZER ve las de sus eventos, ADMIN ve todas.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Página de inscripciones")
+    })
     @GetMapping
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
             keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)
@@ -57,6 +70,13 @@ public class RegistrationController {
         return ResponseEntity.ok(registrationService.findPage(filters, pagination, currentUser));
     }
 
+    @Operation(summary = "Obtener una inscripción por id",
+            description = "Solo el participante dueño, el organizador del evento, o ADMIN.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Inscripción encontrada"),
+            @ApiResponse(responseCode = "403", description = "No tiene permisos sobre esta inscripción"),
+            @ApiResponse(responseCode = "404", description = "Inscripción no encontrada")
+    })
     @GetMapping("/{id}")
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
             keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)
@@ -65,6 +85,15 @@ public class RegistrationController {
         return ResponseEntity.ok(registrationService.findOne(id, currentUser));
     }
 
+    @Operation(summary = "Crear inscripción", description = "Solo PARTICIPANT, sobre sí mismo. Nace PENDING (no "
+            + "descuenta cupo todavía); reabre una fila CANCELLED/REJECTED previa si existe.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Inscripción creada (o reabierta) en PENDING"),
+            @ApiResponse(responseCode = "400", description = "Evento no publicado o fuera del periodo de inscripciones"),
+            @ApiResponse(responseCode = "403", description = "Rol insuficiente (PARTICIPANT)"),
+            @ApiResponse(responseCode = "404", description = "Evento no encontrado"),
+            @ApiResponse(responseCode = "409", description = "Sin cupo disponible o ya tiene una inscripción activa")
+    })
     @PostMapping
     @PreAuthorize("hasRole('PARTICIPANT')")
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
@@ -74,6 +103,17 @@ public class RegistrationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(registrationService.create(dto, currentUser));
     }
 
+    @Operation(summary = "Cambiar estado de una inscripción",
+            description = "CONFIRMED/REJECTED: solo el ORGANIZER dueño del evento o ADMIN. CANCELLED: solo el "
+                    + "PARTICIPANT dueño o ADMIN. Confirmar descuenta cupo del evento; cancelar una CONFIRMED lo "
+                    + "devuelve.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Estado actualizado"),
+            @ApiResponse(responseCode = "400", description = "Transición de estado inválida o evento ya finalizado"),
+            @ApiResponse(responseCode = "403", description = "No tiene permisos para esa transición"),
+            @ApiResponse(responseCode = "404", description = "Inscripción no encontrada"),
+            @ApiResponse(responseCode = "409", description = "Sin cupo disponible para confirmar")
+    })
     @PatchMapping("/{id}/status")
     @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_AUTHENTICATED, limit = 120, windowSeconds = 60,
             keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)

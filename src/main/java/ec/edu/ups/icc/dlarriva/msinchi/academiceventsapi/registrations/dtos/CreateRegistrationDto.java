@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.dtos;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
  */
 public class CreateRegistrationDto {
 
+    @Schema(description = "Evento PUBLISHED con cupo disponible", example = "1")
     @NotNull
     private Long eventId;
 

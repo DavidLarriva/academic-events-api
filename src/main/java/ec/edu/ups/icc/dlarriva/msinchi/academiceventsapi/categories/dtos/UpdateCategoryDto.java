@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.categories.dtos;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -9,10 +10,12 @@ import jakarta.validation.constraints.Size;
  */
 public class UpdateCategoryDto {
 
+    @Schema(description = "Nombre único (case-insensitive)", example = "Desarrollo de Software")
     @NotBlank
     @Size(min = 2, max = 80)
     private String name;
 
+    @Schema(description = "Descripción de la categoría", example = "Eventos sobre programación y buenas prácticas")
     @Size(max = 255)
     private String description;
 

@@ -29,6 +29,13 @@ management:
     web:
       exposure:
         include: health,info,metrics
+  endpoint:
+    health:
+      # Explícito aunque coincide con el default de Actuator: /actuator/health
+      # público nunca debe filtrar detalles internos (DB/Redis, etc.),
+      # docs/instrucciones.md §12. El resto de /actuator/** sí puede mostrar
+      # detalle porque queda protegido con ADMIN en SecurityConfig.
+      show-details: never
 
 springdoc:
   swagger-ui:
