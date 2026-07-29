@@ -62,4 +62,20 @@ public interface RegistrationRepository extends JpaRepository<RegistrationEntity
             """)
     List<RegistrationEntity> findForReport(@Param("eventId") Long eventId, @Param("status") RegistrationStatus status,
             @Param("from") OffsetDateTime from, @Param("to") OffsetDateTime to);
+
+    /**
+     * Para el certificado (prompt 18): a diferencia de findForReport, acá sí
+     * hace falta más que el id de event/participant (título del evento,
+     * modalidad, lugar, nombre/correo del participante) — con
+     * spring.jpa.open-in-view=false esos campos no estarían disponibles al
+     * armar el PDF sin este JOIN FETCH (la sesión de Hibernate ya se cerró
+     * al volver del repository).
+     */
+    @Query("""
+            SELECT r FROM RegistrationEntity r
+            JOIN FETCH r.event
+            JOIN FETCH r.participant
+            WHERE r.id = :id
+            """)
+    Optional<RegistrationEntity> findByIdWithEventAndParticipant(@Param("id") Long id);
 }

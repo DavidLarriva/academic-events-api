@@ -11,4 +11,13 @@ public interface ReportService {
     byte[] generateRegistrationsPdf(Long eventId, ReportFilterDto filters, UserDetailsImpl currentUser);
 
     byte[] generateRegistrationsExcel(Long eventId, ReportFilterDto filters, UserDetailsImpl currentUser);
+
+    /**
+     * Solo el PARTICIPANT dueño de la inscripción, sin excepción para ADMIN
+     * (docs/instrucciones.md §13 marca este endpoint específicamente como
+     * "Participante propietario", a diferencia de los dos reportes de
+     * arriba que sí dicen "Propietario o ADMIN" — decisión acordada con el
+     * usuario). Solo para inscripciones CONFIRMED.
+     */
+    byte[] generateRegistrationCertificate(Long registrationId, UserDetailsImpl currentUser);
 }

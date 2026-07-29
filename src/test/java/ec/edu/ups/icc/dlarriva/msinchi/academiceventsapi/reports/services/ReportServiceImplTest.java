@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.reports.services;
 
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.domain.BadRequestException;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.domain.ForbiddenException;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.core.exceptions.domain.NotFoundException;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.entities.EventEntity;
@@ -138,6 +139,72 @@ class ReportServiceImplTest {
         reportService.generateRegistrationsExcel(EVENT_ID, filters, principal(1L, RoleName.ORGANIZER));
 
         verify(registrationRepository).findForReport(eq(EVENT_ID), eq(RegistrationStatus.PENDING), any(), any());
+    }
+
+    // ---------------------------------------------------------------
+    // generateRegistrationCertificate: solo el PARTICIPANT dueño, sin
+    // excepción para ADMIN (a diferencia de los reportes de arriba).
+    // ---------------------------------------------------------------
+
+    @Test
+    void certificateFailsWhenRegistrationDoesNotExist() {
+        when(registrationRepository.findByIdWithEventAndParticipant(1L)).thenReturn(Optional.empty());
+
+        NotFoundException ex = assertThrows(NotFoundException.class,
+                () -> reportService.generateRegistrationCertificate(1L, principal(16L, RoleName.PARTICIPANT)));
+
+        assertEquals("REGISTRATION_NOT_FOUND", ex.getCode());
+    }
+
+    @Test
+    void certificateRejectsWhenCurrentUserIsNotTheOwningParticipant() {
+        EventEntity event = eventOwnedBy(1L);
+        RegistrationEntity registration = registrationOf(event, "Ana", "Lucía", "ana@academic.test");
+        when(registrationRepository.findByIdWithEventAndParticipant(1L)).thenReturn(Optional.of(registration));
+
+        ForbiddenException ex = assertThrows(ForbiddenException.class,
+                () -> reportService.generateRegistrationCertificate(1L, principal(999L, RoleName.PARTICIPANT)));
+
+        assertEquals("NOT_RESOURCE_OWNER", ex.getCode());
+    }
+
+    @Test
+    void certificateRejectsEvenForAdminWhenNotTheOwningParticipant() {
+        // A propósito NO reutiliza OwnershipValidator (que siempre deja pasar
+        // a ADMIN): este comprobante es exclusivo del participante dueño.
+        EventEntity event = eventOwnedBy(1L);
+        RegistrationEntity registration = registrationOf(event, "Ana", "Lucía", "ana@academic.test");
+        when(registrationRepository.findByIdWithEventAndParticipant(1L)).thenReturn(Optional.of(registration));
+
+        ForbiddenException ex = assertThrows(ForbiddenException.class,
+                () -> reportService.generateRegistrationCertificate(1L, principal(999L, RoleName.ADMIN)));
+
+        assertEquals("NOT_RESOURCE_OWNER", ex.getCode());
+    }
+
+    @Test
+    void certificateRejectsWhenRegistrationIsNotConfirmed() {
+        EventEntity event = eventOwnedBy(1L);
+        RegistrationEntity registration = registrationOf(event, "Ana", "Lucía", "ana@academic.test");
+        registration.setStatus(RegistrationStatus.PENDING);
+        when(registrationRepository.findByIdWithEventAndParticipant(1L)).thenReturn(Optional.of(registration));
+
+        BadRequestException ex = assertThrows(BadRequestException.class,
+                () -> reportService.generateRegistrationCertificate(1L, principal(16L, RoleName.PARTICIPANT)));
+
+        assertEquals("REGISTRATION_NOT_CONFIRMED", ex.getCode());
+    }
+
+    @Test
+    void certificateSucceedsForTheOwningParticipantAndProducesAValidPdf() {
+        EventEntity event = eventOwnedBy(1L);
+        RegistrationEntity registration = registrationOf(event, "Ana", "Lucía", "ana@academic.test");
+        when(registrationRepository.findByIdWithEventAndParticipant(1L)).thenReturn(Optional.of(registration));
+
+        byte[] pdf = reportService.generateRegistrationCertificate(1L, principal(16L, RoleName.PARTICIPANT));
+
+        assertTrue(pdf.length > 0);
+        assertEquals("%PDF", new String(pdf, 0, 4, StandardCharsets.US_ASCII));
     }
 
     // ---------------------------------------------------------------

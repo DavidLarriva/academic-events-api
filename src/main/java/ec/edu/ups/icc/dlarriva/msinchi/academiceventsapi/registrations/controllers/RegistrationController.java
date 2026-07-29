@@ -7,6 +7,7 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.dtos.Regi
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.dtos.RegistrationResponseDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.dtos.UpdateRegistrationStatusDto;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.services.RegistrationService;
+import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.reports.services.ReportService;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.annotations.RateLimit;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.config.OpenApiConfig;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.enums.RateLimitKeyStrategy;
@@ -18,7 +19,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,9 +53,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegistrationController {
 
     private final RegistrationService registrationService;
+    private final ReportService reportService;
 
-    public RegistrationController(RegistrationService registrationService) {
+    public RegistrationController(RegistrationService registrationService, ReportService reportService) {
         this.registrationService = registrationService;
+        this.reportService = reportService;
     }
 
     @Operation(summary = "Listar inscripciones", description = "Visibilidad scoped por rol: PARTICIPANT ve solo las "
@@ -121,5 +126,30 @@ public class RegistrationController {
                                                                   @Valid @RequestBody UpdateRegistrationStatusDto dto,
                                                                   @AuthenticationPrincipal UserDetailsImpl currentUser) {
         return ResponseEntity.ok(registrationService.updateStatus(id, dto, currentUser));
+    }
+
+    @Operation(summary = "Comprobante de inscripción (PDF)",
+            description = "Solo el PARTICIPANT dueño de la inscripción (ni ADMIN ni ORGANIZER). Solo para "
+                    + "inscripciones CONFIRMED; el registration_code (UUID) queda impreso dentro del PDF como "
+                    + "código verificable.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Comprobante PDF generado"),
+            @ApiResponse(responseCode = "400", description = "La inscripción no está CONFIRMED"),
+            @ApiResponse(responseCode = "403", description = "No es el participante dueño de la inscripción"),
+            @ApiResponse(responseCode = "404", description = "Inscripción no encontrada"),
+            @ApiResponse(responseCode = "429", description = "Demasiadas solicitudes de reportes")
+    })
+    @GetMapping(value = "/{id}/certificate.pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @PreAuthorize("hasRole('PARTICIPANT')")
+    @RateLimit(prefix = RedisKeyPrefix.RATE_LIMIT_REPORTS, limit = 5, windowSeconds = 60,
+            keyStrategy = RateLimitKeyStrategy.AUTHENTICATED_USER)
+    public ResponseEntity<byte[]> certificate(@PathVariable Long id,
+                                               @AuthenticationPrincipal UserDetailsImpl currentUser) {
+        byte[] pdf = reportService.generateRegistrationCertificate(id, currentUser);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"certificate-registration-" + id + ".pdf\"")
+                .body(pdf);
     }
 }
