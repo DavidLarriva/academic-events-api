@@ -47,9 +47,7 @@ Thumbs.db
 
 ### Logs ###
 *.log
-CLAUDE.md
-.claude/
-claude.md
+
 
 ### Reportes generados localmente al probar (PDF/Excel bajo demanda) ###
 *.pdf
