@@ -46,9 +46,8 @@ ningún paso manual adicional.
 ## Modelo de datos
 
 Diagrama entidad-relación derivado exactamente de
-`src/main/resources/db/migration/V1__initial_schema_and_data.sql` (también
-disponible como archivo standalone en
-[`docs/er-diagram.md`](docs/er-diagram.md)):
+`src/main/resources/db/migration/V1__initial_schema_and_data.sql` también está como archivo en
+[`docs/er-diagram.md`](docs/er-diagram.md):
 
 ```mermaid
 erDiagram
