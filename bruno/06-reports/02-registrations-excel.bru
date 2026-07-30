@@ -1,0 +1,26 @@
+meta {
+  name: Reporte de inscripciones (Excel)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/reports/events/1/registrations.xlsx
+  auth: bearer
+}
+
+params:query {
+  ~from: 2025-01-01
+  ~to: 2030-12-31
+  ~status: CONFIRMED
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+docs {
+  Igual que el reporte en PDF pero generado con Apache POI en formato
+  .xlsx. Mismos filtros y las mismas reglas de ownership (ORGANIZER dueño
+  del evento o ADMIN).
+}

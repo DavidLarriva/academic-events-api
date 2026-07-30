@@ -1,0 +1,19 @@
+meta {
+  name: Obtener sesión por id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/events/1/sessions/1
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenParticipant}}
+}
+
+docs {
+  Sesión 1 del evento 1 ("Configuración de Spring Security") existe en el
+  seed.
+}

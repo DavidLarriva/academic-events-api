@@ -1,0 +1,44 @@
+meta {
+  name: Actualizar evento (publicar)
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/events/{{eventId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+body:json {
+  {
+    "title": "Taller de Concurrencia en Java",
+    "description": "Hilos, locks y estructuras concurrentes",
+    "modality": "PRESENTIAL",
+    "location": "Laboratorio de Computación 4",
+    "capacity": 25,
+    "registrationStartAt": "2025-01-01T00:00:00Z",
+    "registrationEndAt": "2030-01-01T00:00:00Z",
+    "startAt": "2030-06-01T09:00:00Z",
+    "endAt": "2030-06-01T13:00:00Z",
+    "status": "PUBLISHED",
+    "categoryId": 1
+  }
+}
+
+docs {
+  Corré esto DESPUÉS de "Crear evento" (usa {{eventId}}, el que acabás de
+  crear) para pasarlo de DRAFT a PUBLISHED — necesario para poder
+  inscribirse (05-registrations/03-create lo requiere). Reemplazo total
+  (PUT): hay que reenviar todos los campos, no solo el que cambia.
+
+  Ownership: solo el ORGANIZER dueño del evento (quien lo creó) o ADMIN —
+  probá con {{accessTokenParticipant}} para ver el 403. Si cambiás
+  "capacity", el service recalcula availableCapacity preservando los
+  cupos ya confirmados. "version" no va en el body: el optimistic locking
+  de JPA funciona solo con el flujo normal fetch-mutate-save.
+}

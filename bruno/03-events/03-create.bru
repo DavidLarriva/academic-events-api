@@ -1,0 +1,48 @@
+meta {
+  name: Crear evento
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/events
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+body:json {
+  {
+    "title": "Taller de Concurrencia en Java",
+    "description": "Hilos, locks y estructuras concurrentes",
+    "modality": "PRESENTIAL",
+    "location": "Laboratorio de Computación 4",
+    "capacity": 25,
+    "registrationStartAt": "2025-01-01T00:00:00Z",
+    "registrationEndAt": "2030-01-01T00:00:00Z",
+    "startAt": "2030-06-01T09:00:00Z",
+    "endAt": "2030-06-01T13:00:00Z",
+    "categoryId": 1
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) {
+    bru.setEnvVar("eventId", res.body.id);
+  }
+}
+
+docs {
+  201, nace en DRAFT con availableCapacity = capacity y organizerId = el
+  usuario del token (nunca se manda en el body). Ventana de inscripción
+  2025-2030 a propósito, para que este ejemplo siga siendo válido sin
+  importar cuándo lo corras. Guarda el id creado en {{eventId}}, usado por
+  "Actualizar evento (publicar)" y por 05-registrations/03-create.
+
+  modality: PRESENTIAL exige location y prohíbe virtualUrl; VIRTUAL al
+  revés; HYBRID exige ambos (probalo cambiando modality para ver el 400).
+  Rol: ADMIN u ORGANIZER.
+}

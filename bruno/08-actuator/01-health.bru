@@ -1,0 +1,16 @@
+meta {
+  name: Health check
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/actuator/health
+}
+
+docs {
+  Público, sin autenticación (permitAll en SecurityConfig) — usado por el
+  HEALTHCHECK del Dockerfile y por Render para saber si el contenedor
+  está listo. Devuelve {"status": "UP"} cuando la app, la DB y Redis están
+  conectados correctamente.
+}

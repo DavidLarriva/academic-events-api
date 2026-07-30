@@ -1,0 +1,26 @@
+meta {
+  name: Registrar (PARTICIPANT)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "firstName": "Nuevo",
+    "lastName": "Participante",
+    "email": "nuevo.participante@academic.test",
+    "password": "Password123*"
+  }
+}
+
+docs {
+  Crea un usuario nuevo (siempre queda con rol PARTICIPANT) y devuelve
+  accessToken + refreshToken, como si fuera un login automático. Rate limit:
+  3 solicitudes/hora por IP. Si el correo ya existe, responde 409.
+}

@@ -1,0 +1,20 @@
+meta {
+  name: Usuario autenticado (me)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/auth/me
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenAdmin}}
+}
+
+docs {
+  Devuelve id/nombre/correo/roles del usuario dueño del accessToken usado.
+  Cambiá el token del tab Auth por {{accessTokenOrganizer}} o
+  {{accessTokenParticipant}} para probar con otro usuario.
+}

@@ -1,0 +1,19 @@
+meta {
+  name: Obtener evento por id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/events/1
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenParticipant}}
+}
+
+docs {
+  El id 1 existe en el seed ("Taller de seguridad con Spring Boot").
+  Cualquier rol autenticado puede leer.
+}

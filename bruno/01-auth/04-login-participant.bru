@@ -1,0 +1,30 @@
+meta {
+  name: Login PARTICIPANT
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "carlos.velez@academic.test",
+    "password": "Password123*"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.accessToken) {
+    bru.setEnvVar("accessTokenParticipant", res.body.accessToken);
+  }
+}
+
+docs {
+  carlos.velez@academic.test tiene solo PARTICIPANT. Guarda el accessToken
+  en {{accessTokenParticipant}}, usado por los requests de crear
+  inscripciones, cancelarlas, y descargar el propio certificado.
+}

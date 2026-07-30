@@ -1,0 +1,29 @@
+meta {
+  name: Listar categorías
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/categories?page=0&size=10&sortBy=name&direction=asc
+  auth: bearer
+}
+
+params:query {
+  page: 0
+  size: 10
+  sortBy: name
+  direction: asc
+  ~name: data
+  ~active: true
+}
+
+auth:bearer {
+  token: {{accessTokenAdmin}}
+}
+
+docs {
+  Paginado + filtros opcionales (name: substring case-insensitive, active:
+  true/false). Los filtros comentados (~) están desactivados; activalos
+  quitando el ~ para probarlos. Solo ADMIN.
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Login ORGANIZER
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "maria.cordero@academic.test",
+    "password": "Password123*"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.accessToken) {
+    bru.setEnvVar("accessTokenOrganizer", res.body.accessToken);
+  }
+}
+
+docs {
+  maria.cordero@academic.test tiene ORGANIZER + PARTICIPANT. Guarda el
+  accessToken en {{accessTokenOrganizer}}, usado por los requests de
+  crear/editar/eliminar eventos y sesiones, y confirmar/rechazar
+  inscripciones de sus propios eventos.
+}

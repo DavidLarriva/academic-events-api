@@ -1,0 +1,28 @@
+meta {
+  name: Listar inscripciones
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/registrations?page=0&size=10
+  auth: bearer
+}
+
+params:query {
+  page: 0
+  size: 10
+  ~eventId: 1
+  ~participantId: 5
+  ~status: CONFIRMED
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+docs {
+  Visibilidad scoped por rol: con {{accessTokenParticipant}} ve solo las
+  suyas; con {{accessTokenOrganizer}} ve las de los eventos que organiza;
+  con {{accessTokenAdmin}} ve todas. Probá cambiando el token del tab Auth.
+}

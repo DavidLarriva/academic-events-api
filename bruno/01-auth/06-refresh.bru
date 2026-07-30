@@ -1,0 +1,31 @@
+meta {
+  name: Refresh token
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/auth/refresh
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "refreshToken": "{{refreshToken}}"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.accessToken) {
+    bru.setEnvVar("accessTokenAdmin", res.body.accessToken);
+    bru.setEnvVar("refreshToken", res.body.refreshToken);
+  }
+}
+
+docs {
+  Rota el refresh token: el usado acá queda revocado (replaced_by_token_id
+  en BD) y devuelve un par nuevo. Reutilizar el refreshToken viejo después
+  de esto responde 401 (y si se reintenta, revoca en cadena todas las
+  sesiones activas del usuario — protección contra robo de token).
+}

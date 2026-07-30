@@ -1,0 +1,30 @@
+meta {
+  name: Actualizar sesión
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/events/1/sessions/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+body:json {
+  {
+    "title": "Configuración de Spring Security (actualizado)",
+    "description": "Filtros, SecurityFilterChain y protección de endpoints.",
+    "startAt": "2030-06-01T09:00:00Z",
+    "endAt": "2030-06-01T10:30:00Z",
+    "location": "Laboratorio de Computación 3",
+    "virtualUrl": "https://meet.example.test/spring-security/session-1"
+  }
+}
+
+docs {
+  Reemplazo total. Solo el ORGANIZER dueño del evento padre o ADMIN.
+}

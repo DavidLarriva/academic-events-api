@@ -1,0 +1,22 @@
+meta {
+  name: Eliminar evento (lógico)
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/events/4
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+docs {
+  204. Pone deleted=true (usá un evento sin inscripciones activas para que
+  funcione, ej. el id 4 "Arquitectura cloud..." que en el seed está en
+  DRAFT). Si el evento está PUBLISHED y tiene inscripciones PENDING o
+  CONFIRMED, responde 409 EVENT_HAS_ACTIVE_REGISTRATIONS. Solo el
+  ORGANIZER dueño o ADMIN.
+}

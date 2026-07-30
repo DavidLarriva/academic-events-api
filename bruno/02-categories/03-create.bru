@@ -1,0 +1,28 @@
+meta {
+  name: Crear categoría
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenAdmin}}
+}
+
+body:json {
+  {
+    "name": "Robótica Educativa",
+    "description": "Eventos de robótica aplicada a la educación"
+  }
+}
+
+docs {
+  201 con la categoría creada (active=true por defecto). Repetir el mismo
+  "name" (sin importar mayúsculas/minúsculas) responde 409
+  CATEGORY_NAME_DUPLICATE. Solo ADMIN.
+}

@@ -1,0 +1,28 @@
+meta {
+  name: Reporte de inscripciones (PDF)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/reports/events/1/registrations.pdf
+  auth: bearer
+}
+
+params:query {
+  ~from: 2025-01-01
+  ~to: 2030-12-31
+  ~status: CONFIRMED
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+docs {
+  Genera (OpenPDF) el reporte de inscripciones del evento 1 (seed), scoped
+  al ORGANIZER dueño del evento o ADMIN (403 para otros roles/eventos
+  ajenos). Filtros opcionales: from/to (rango de fecha de inscripción) y
+  status (default CONFIRMED si no se manda). En Bruno, revisá la
+  respuesta en la pestaña de preview/raw para ver el binario.
+}

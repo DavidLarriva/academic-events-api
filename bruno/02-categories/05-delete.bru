@@ -1,0 +1,20 @@
+meta {
+  name: Eliminar categoría (lógico)
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/categories/7
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenAdmin}}
+}
+
+docs {
+  204. Pone active=false, no borra la fila (el id 7, "Tecnologías Legadas",
+  ya nace inactiva en el seed — usalo para no afectar datos de otras
+  pruebas, o cambiá el id). Repetir el delete es idempotente. Solo ADMIN.
+}

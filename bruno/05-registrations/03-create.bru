@@ -1,0 +1,38 @@
+meta {
+  name: Crear inscripción
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/registrations
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenParticipant}}
+}
+
+body:json {
+  {
+    "eventId": "{{eventId}}"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) {
+    bru.setEnvVar("registrationId", res.body.id);
+  }
+}
+
+docs {
+  Corré esto DESPUÉS de 03-events/03-create.bru y 03-events/04-update.bru
+  (el evento tiene que estar PUBLISHED y con la ventana de inscripción
+  abierta). Nace en estado PENDING. El participantId sale del token, nunca
+  del body. Guarda el id creado en {{registrationId}}, usado por
+  04-confirm.bru y 05-reject.bru.
+
+  Rol: solo PARTICIPANT. Falla con 409 si ya existe una inscripción activa
+  del mismo usuario para el mismo evento, o si no hay cupo disponible.
+}

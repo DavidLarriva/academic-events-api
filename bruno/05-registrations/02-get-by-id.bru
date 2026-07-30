@@ -1,0 +1,21 @@
+meta {
+  name: Obtener inscripción por id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/registrations/1
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenParticipant}}
+}
+
+docs {
+  La inscripción 1 del seed (evento 1, carlos.velez, CONFIRMED) — por eso
+  funciona directo con {{accessTokenParticipant}} (carlos.velez es el
+  dueño) sin necesidad de crear nada antes. Solo el participante dueño, el
+  organizador del evento, o ADMIN pueden verla (403 para cualquier otro).
+}

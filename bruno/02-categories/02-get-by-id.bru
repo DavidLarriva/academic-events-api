@@ -1,0 +1,19 @@
+meta {
+  name: Obtener categoría por id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/categories/1
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenAdmin}}
+}
+
+docs {
+  El id 1 existe en el seed ("Desarrollo de Software"). Solo ADMIN; 404 si
+  no existe.
+}

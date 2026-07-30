@@ -1,0 +1,22 @@
+meta {
+  name: Logout
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/auth/logout
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "refreshToken": "{{refreshToken}}"
+  }
+}
+
+docs {
+  Revoca ese refresh token puntual (204 No Content). No cierra otras
+  sesiones/dispositivos del mismo usuario.
+}

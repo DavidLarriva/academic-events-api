@@ -1,0 +1,28 @@
+meta {
+  name: Confirmar inscripción
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/registrations/{{registrationId}}/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+body:json {
+  {
+    "status": "CONFIRMED"
+  }
+}
+
+docs {
+  Corré esto DESPUÉS de 03-create.bru (usa {{registrationId}}). Solo el
+  ORGANIZER dueño del evento o ADMIN puede confirmar/rechazar; el propio
+  PARTICIPANT solo puede pasar su inscripción a CANCELLED (ver
+  05-cancel.bru). Transiciones válidas desde PENDING: CONFIRMED o REJECTED.
+}

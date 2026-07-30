@@ -1,0 +1,30 @@
+meta {
+  name: Listar logs de auditoría
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/audit-logs?page=0&size=10
+  auth: bearer
+}
+
+params:query {
+  page: 0
+  size: 10
+  ~actorId: 1
+  ~action: CREATE
+  ~resourceType: EVENT
+  ~from: 2025-01-01
+  ~to: 2030-12-31
+}
+
+auth:bearer {
+  token: {{accessTokenAdmin}}
+}
+
+docs {
+  Solo ADMIN. Devuelve el historial de acciones auditadas (quién hizo qué
+  sobre qué recurso y cuándo). Todos los params de filtro son opcionales;
+  corré el request sin ninguno para ver todo el historial paginado.
+}

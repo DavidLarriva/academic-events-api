@@ -1,0 +1,18 @@
+meta {
+  name: Eliminar sesión
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/events/1/sessions/2
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+docs {
+  204. Solo el ORGANIZER dueño del evento padre o ADMIN.
+}

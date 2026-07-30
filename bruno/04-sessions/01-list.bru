@@ -1,0 +1,27 @@
+meta {
+  name: Listar sesiones de un evento
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/events/1/sessions?page=0&size=10
+  auth: bearer
+}
+
+params:query {
+  page: 0
+  size: 10
+  ~title: JWT
+  ~startFrom: 2026-01-01T00:00:00Z
+  ~startTo: 2027-01-01T00:00:00Z
+}
+
+auth:bearer {
+  token: {{accessTokenParticipant}}
+}
+
+docs {
+  Anidado bajo el evento (event id 1 en el seed ya tiene 2 sesiones).
+  Cualquier rol autenticado puede leer.
+}

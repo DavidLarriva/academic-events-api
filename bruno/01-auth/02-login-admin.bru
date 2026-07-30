@@ -1,0 +1,35 @@
+meta {
+  name: Login ADMIN
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@academic.test",
+    "password": "Password123*"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.accessToken) {
+    bru.setEnvVar("accessTokenAdmin", res.body.accessToken);
+    bru.setEnvVar("refreshToken", res.body.refreshToken);
+  }
+}
+
+docs {
+  Login con el usuario semilla ADMIN. Guarda el accessToken en
+  {{accessTokenAdmin}}, que usan todos los requests que necesitan rol ADMIN
+  (categorías, auditoría). También guarda {{refreshToken}} para los
+  requests de Refresh/Logout de esta misma carpeta.
+
+  Rate limit: 5 solicitudes/minuto por IP+correo (429 + Retry-After al
+  superarlo). Contraseña semilla para todos los usuarios: Password123*
+}

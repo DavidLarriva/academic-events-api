@@ -1,0 +1,31 @@
+meta {
+  name: Crear sesión
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/events/1/sessions
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenOrganizer}}
+}
+
+body:json {
+  {
+    "title": "Sesión extra: Q&A",
+    "description": "Preguntas y respuestas al cierre del taller",
+    "startAt": "2030-06-01T13:00:00Z",
+    "endAt": "2030-06-01T13:30:00Z",
+    "location": "Laboratorio de Computación 3",
+    "virtualUrl": "https://meet.example.test/spring-security/qa"
+  }
+}
+
+docs {
+  201. Ownership = ownership del evento padre (maria.cordero es dueña del
+  evento 1). Solo ADMIN u ORGANIZER dueño.
+}

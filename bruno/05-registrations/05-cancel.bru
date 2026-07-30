@@ -1,0 +1,32 @@
+meta {
+  name: Cancelar inscripción (participante)
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/registrations/1/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenParticipant}}
+}
+
+body:json {
+  {
+    "status": "CANCELLED"
+  }
+}
+
+docs {
+  Ejemplo standalone con la inscripción 1 del seed (carlos.velez, dueño,
+  CONFIRMED). El propio participante dueño puede cancelar su inscripción
+  en cualquier momento antes del evento; NO puede confirmarla ni
+  rechazarla (eso es del organizador/ADMIN, ver 04-confirm.bru).
+
+  Ojo: si corrés este request, la inscripción 1 queda CANCELLED y
+  06-certificate.bru dejará de funcionar hasta que la vuelvas a confirmar
+  a mano (PATCH status=CONFIRMED con {{accessTokenOrganizer}}).
+}

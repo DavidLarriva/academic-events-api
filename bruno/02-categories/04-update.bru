@@ -1,0 +1,27 @@
+meta {
+  name: Actualizar categoría
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/categories/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenAdmin}}
+}
+
+body:json {
+  {
+    "name": "Desarrollo de Software",
+    "description": "Descripción actualizada"
+  }
+}
+
+docs {
+  Reemplazo total (name + description). Reemplazá el 1 de la URL por el id
+  real que quieras editar. Solo ADMIN.
+}

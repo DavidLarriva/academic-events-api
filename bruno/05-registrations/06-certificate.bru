@@ -1,0 +1,22 @@
+meta {
+  name: Descargar certificado (PDF)
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/registrations/1/certificate.pdf
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessTokenParticipant}}
+}
+
+docs {
+  Devuelve el PDF del certificado de la inscripción 1 del seed
+  (carlos.velez, CONFIRMED). Solo el PARTICIPANT dueño de la inscripción
+  puede descargar su propio certificado, y solo si el estado es
+  CONFIRMED. En Bruno, usá el botón "Send" y revisá la respuesta en la
+  pestaña de preview/raw para ver el binario.
+}

@@ -1,0 +1,32 @@
+meta {
+  name: Listar eventos
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/events?page=0&size=10&sortBy=startAt&direction=asc
+  auth: bearer
+}
+
+params:query {
+  page: 0
+  size: 10
+  sortBy: startAt
+  direction: asc
+  ~categoryId: 1
+  ~status: PUBLISHED
+  ~organizerId: 2
+  ~startFrom: 2026-01-01T00:00:00Z
+  ~startTo: 2027-01-01T00:00:00Z
+}
+
+auth:bearer {
+  token: {{accessTokenParticipant}}
+}
+
+docs {
+  Paginado + filtros opcionales por categoría, estado (DRAFT/PUBLISHED/
+  FINISHED/CANCELLED), organizador y rango de fechas sobre startAt.
+  Cualquier rol autenticado puede leer (ADMIN/ORGANIZER/PARTICIPANT).
+}
