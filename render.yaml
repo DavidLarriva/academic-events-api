@@ -36,7 +36,13 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    healthCheckPath: /api/actuator/health
+    # /health a secas agrega Redis/DB al estado: un hipo de DNS de Redis al
+    # arrancar (dos servicios despertando a la vez) lo tumba a DOWN por unos
+    # segundos y Render reinicia el contenedor pensando que fallo el deploy,
+    # cayendo siempre en el mismo hueco por lo lento que es el cold start del
+    # plan gratis. /health/liveness solo pregunta si el proceso esta vivo,
+    # sin depender de si Redis/Postgres ya resolvieron su DNS.
+    healthCheckPath: /api/actuator/health/liveness
     autoDeployTrigger: "off" # YAML interpreta "off" (sin comillas) como booleano; se cita a propósito
     envVars:
       - key: SPRING_PROFILES_ACTIVE

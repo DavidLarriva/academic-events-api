@@ -149,8 +149,9 @@ public class SecurityConfig {
 
     /**
      * Endpoints públicos (permitAll): registro/login/refresh/logout (se validan
-     * dentro de AuthService, no con el JWT filter) y actuator/health (health
-     * check, sin detalles internos por config de Actuator). El resto de
+     * dentro de AuthService, no con el JWT filter) y actuator/health + sus
+     * subrutas (/health/liveness, /health/readiness — health check, sin
+     * detalles internos por config de Actuator). El resto de
      * /actuator/** exige ADMIN. Todo lo demás exige un access token válido
      * por defecto (.anyRequest().authenticated()) — los módulos de negocio
      * no necesitan tocar esta clase para quedar protegidos, solo agregan
@@ -167,7 +168,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login", "/auth/refresh", "/auth/logout").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         // Necesario para que un 403 de "/actuator/**" (regla a nivel de
                         // filtro, no @PreAuthorize) se muestre tal cual: al denegar,
                         // AccessDeniedHandler hace sendError(403) -> forward interno a
