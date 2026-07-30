@@ -34,10 +34,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Anidado bajo el evento (contexto-materia.md §10.2: "el recurso principal
+ * Anidado bajo el evento (contexto-materia.md sección 10.2: "el recurso principal
  * de la URL da el contexto"), porque una sesión siempre pertenece a un
- * evento (docs/instrucciones.md §2). Lectura (GET) abierta a cualquier rol
- * autenticado, incluido PARTICIPANT (docs/instrucciones.md §3: "PARTICIPANT
+ * evento (docs/instrucciones.pdf sección 2). Lectura (GET) abierta a cualquier rol
+ * autenticado, incluido PARTICIPANT (docs/instrucciones.pdf sección 3: "PARTICIPANT
  * consulta eventos"); mutaciones restringidas a ADMIN/ORGANIZER, con
  * ownership del evento padre verificado dentro del service.
  */

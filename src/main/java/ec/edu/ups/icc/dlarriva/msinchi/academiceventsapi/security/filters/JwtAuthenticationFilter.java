@@ -20,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * Flujo por request (contexto-materia.md §12.7). Los errores se loguean y
+ * Flujo por request (contexto-materia.md sección 12.7). Los errores se loguean y
  * nunca se relanzan: se deja el SecurityContext vacío y que
  * JwtAuthenticationEntryPoint responda 401 si el endpoint lo requiere.
  */

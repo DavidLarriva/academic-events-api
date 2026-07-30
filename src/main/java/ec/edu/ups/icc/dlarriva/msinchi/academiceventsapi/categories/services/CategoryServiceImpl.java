@@ -105,7 +105,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * created_at/updated_at son insertable=false/updatable=false (los llena
-     * Postgres vía DEFAULT/trigger, contexto-materia.md §6.3 no aplica tal
+     * Postgres vía DEFAULT/trigger, contexto-materia.md sección 6.3 no aplica tal
      * cual acá porque el schema real es distinto — ver CategoryEntity). Sin
      * el flush+refresh explícitos, el objeto en memoria se queda con esos
      * campos en null tras el insert/update y la respuesta los expone así.

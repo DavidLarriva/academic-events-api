@@ -27,14 +27,14 @@ import java.time.OffsetDateTime;
 import java.util.Set;
 
 /**
- * Ownership de una sesión = ownership del evento padre (docs/instrucciones.md
- * §2/§3: "ORGANIZER gestiona únicamente sus eventos, sesiones e
+ * Ownership de una sesión = ownership del evento padre (docs/instrucciones.pdf
+ * sección 2/sección 3: "ORGANIZER gestiona únicamente sus eventos, sesiones e
  * inscripciones"): no hay un "dueño" propio en la tabla sessions, así que
  * siempre se resuelve vía session.getEvent().getOrganizer().getId() antes de
  * pasarlo a OwnershipValidator (mismo componente reutilizado por events).
  * <p>
  * Reglas de horario acordadas explícitamente con el usuario (no estaban en
- * docs/instrucciones.md §2, que solo exige el CHECK físico start_at&lt;end_at
+ * docs/instrucciones.pdf sección 2, que solo exige el CHECK físico start_at&lt;end_at
  * y el UNIQUE(event_id,title,start_at)):
  * 1) La sesión debe ocurrir dentro del rango [event.startAt, event.endAt].
  * 2) Dos sesiones del mismo evento no pueden solaparse en el tiempo (modelo

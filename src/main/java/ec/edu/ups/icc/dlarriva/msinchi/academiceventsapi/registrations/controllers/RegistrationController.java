@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Rutas planas (no anidadas bajo /events), igual que
- * /api/registrations/{id}/certificate.pdf en docs/instrucciones.md §13: una
+ * /api/registrations/{id}/certificate.pdf en docs/instrucciones.pdf sección 13: una
  * inscripción es un recurso propio del participante, no solo un sub-recurso
  * del evento. Lectura (GET) abierta a cualquier rol autenticado, pero con
  * visibilidad scoped por rol dentro del service (a diferencia de

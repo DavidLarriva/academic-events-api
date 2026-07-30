@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * CRUD completo restringido a ADMIN (docs/instrucciones.md §3: "ADMIN
+ * CRUD completo restringido a ADMIN (docs/instrucciones.pdf sección 3: "ADMIN
  * administra... categorías"), incluida la lectura — si más adelante el
  * módulo de eventos necesita que ORGANIZER/PARTICIPANT lean categorías
  * activas, se agrega ahí un endpoint de lectura propio para ese caso de

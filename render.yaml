@@ -1,4 +1,4 @@
-# Blueprint de Render (docs/instrucciones.md §15, contexto-materia.md §17.8).
+# Blueprint de Render (docs/instrucciones.pdf sección 15, contexto-materia.md sección 17.8).
 #
 # Este archivo NO despliega nada por sí solo: Render lo lee recién cuando
 # vos conectás el repo como "Blueprint" en el dashboard. autoDeployTrigger
@@ -98,7 +98,7 @@ services:
         sync: false # dominio(s) real(es) del frontend desplegado, separados
         # por coma — no se puede adivinar de antemano.
 
-      # --- Swagger/OpenAPI protegido en prod (docs/instrucciones.md §11) ---
+      # --- Swagger/OpenAPI protegido en prod (docs/instrucciones.pdf sección 11) ---
       - key: SWAGGER_USERNAME
         sync: false
       - key: SWAGGER_PASSWORD

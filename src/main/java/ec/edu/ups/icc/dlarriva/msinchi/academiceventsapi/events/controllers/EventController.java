@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Lectura (GET) abierta a cualquier rol autenticado (ADMIN/ORGANIZER/
- * PARTICIPANT, docs/instrucciones.md §3); mutaciones restringidas a
+ * PARTICIPANT, docs/instrucciones.pdf sección 3); mutaciones restringidas a
  * ADMIN/ORGANIZER, con ownership verificado dentro del service (un
  * ORGANIZER solo edita/elimina sus propios eventos, ADMIN accede a todos).
  */

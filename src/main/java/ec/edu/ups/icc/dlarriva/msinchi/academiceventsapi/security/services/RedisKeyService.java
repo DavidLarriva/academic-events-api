@@ -6,7 +6,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 /**
- * Único punto de acceso a Redis del proyecto (docs/instrucciones.md §6).
+ * Único punto de acceso a Redis del proyecto (docs/instrucciones.pdf sección 6).
  * <p>
  * Redis es exclusivamente para información TEMPORAL usada por mecanismos de
  * seguridad y rendimiento (rate limiting, bloqueo temporal de login).

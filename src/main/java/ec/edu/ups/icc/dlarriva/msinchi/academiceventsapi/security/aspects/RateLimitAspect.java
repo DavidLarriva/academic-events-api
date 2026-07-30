@@ -19,7 +19,7 @@ import java.time.Duration;
 
 /**
  * Aplica @RateLimit sobre cualquier método de controlador
- * (docs/instrucciones.md §7): incrementa atómicamente el contador en Redis
+ * (docs/instrucciones.pdf sección 7): incrementa atómicamente el contador en Redis
  * (RedisKeyService, INCR+EXPIRE) y, si se supera el límite, corta la
  * ejecución lanzando TooManyRequestsException (429 + Retry-After, manejado
  * por GlobalExceptionHandler) sin llegar al método real.

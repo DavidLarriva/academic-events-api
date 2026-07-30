@@ -18,8 +18,8 @@ import java.util.List;
 
 /**
  * Apache POI (ya en build.gradle desde el prompt 1) genera el .xlsx por
- * completo en memoria: sin archivos temporales en disco (docs/instrucciones.md
- * §15). Fechas siempre en America/Guayaquil vía BusinessTimeZoneConverter.
+ * completo en memoria: sin archivos temporales en disco (docs/instrucciones.pdf
+ * sección 15). Fechas siempre en America/Guayaquil vía BusinessTimeZoneConverter.
  */
 public final class RegistrationExcelReportGenerator {
 

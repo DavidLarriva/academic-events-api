@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Cubre docs/instrucciones.md §4/§5: mensajes de autenticación genéricos
+ * Cubre docs/instrucciones.pdf sección 4/sección 5: mensajes de autenticación genéricos
  * (login nunca revela si el correo existe), rotación de refresh token en
  * refresh(), y auditoría de los 5 eventos de AuthServiceImpl.
  */
@@ -142,7 +142,7 @@ class AuthServiceImplTest {
     }
 
     // ---------------------------------------------------------------
-    // login: mensajes genéricos (docs/instrucciones.md §4)
+    // login: mensajes genéricos (docs/instrucciones.pdf sección 4)
     // ---------------------------------------------------------------
 
     @Test
@@ -190,7 +190,7 @@ class AuthServiceImplTest {
     }
 
     /**
-     * docs/instrucciones.md §4 + seed real (V1__initial_schema_and_data.sql
+     * docs/instrucciones.pdf sección 4 + seed real (V1__initial_schema_and_data.sql
      * usa hashes con prefijo $2y$, variante OpenBSD de BCrypt). El
      * BCryptPasswordEncoder de Spring Security debe poder verificar ese
      * prefijo igual que el $2a$/$2b$ que genera por defecto, sin necesitar la
@@ -209,7 +209,7 @@ class AuthServiceImplTest {
     }
 
     // ---------------------------------------------------------------
-    // refresh: rotación (contexto-materia.md §15)
+    // refresh: rotación (contexto-materia.md sección 15)
     // ---------------------------------------------------------------
 
     @Test

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 /**
  * Sin participantId: el dueño de la inscripción sale siempre de
- * @AuthenticationPrincipal, nunca del body (contexto-materia.md §14.3).
+ * @AuthenticationPrincipal, nunca del body (contexto-materia.md sección 14.3).
  */
 public class CreateRegistrationDto {
 

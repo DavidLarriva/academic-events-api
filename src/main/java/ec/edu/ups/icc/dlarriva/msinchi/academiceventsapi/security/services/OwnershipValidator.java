@@ -2,7 +2,7 @@ package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.services;
 
 /**
  * Componente genérico y reutilizable de validación de ownership
- * (contexto-materia.md §14, docs/instrucciones.md §3: "un organizador no
+ * (contexto-materia.md sección 14, docs/instrucciones.pdf sección 3: "un organizador no
  * podrá modificar eventos pertenecientes a otro organizador").
  * <p>
  * No conoce entidades de negocio: los módulos de eventos/sesiones/

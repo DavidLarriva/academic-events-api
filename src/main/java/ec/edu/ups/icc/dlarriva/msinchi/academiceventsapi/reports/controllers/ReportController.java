@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Archivos generados bajo demanda, en memoria (docs/instrucciones.md §15:
+ * Archivos generados bajo demanda, en memoria (docs/instrucciones.pdf sección 15:
  * el contenedor no almacena archivos permanentes). Solo ORGANIZER dueño del
  * evento o ADMIN (ownership verificado en ReportServiceImpl).
  */

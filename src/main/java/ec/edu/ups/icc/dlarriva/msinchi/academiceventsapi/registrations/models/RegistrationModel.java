@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * Dominio puro, sin anotaciones JPA (contexto-materia.md §4.2).
+ * Dominio puro, sin anotaciones JPA (contexto-materia.md sección 4.2).
  */
 public class RegistrationModel {
 

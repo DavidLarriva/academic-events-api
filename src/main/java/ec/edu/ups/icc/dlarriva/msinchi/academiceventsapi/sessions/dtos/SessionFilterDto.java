@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 
 /**
  * Filtros de query params para el listado de sesiones de UN evento
- * (contexto-materia.md §10.3). eventId no está acá: llega por la URL
+ * (contexto-materia.md sección 10.3). eventId no está acá: llega por la URL
  * (/events/{eventId}/sessions), no como filtro.
  */
 public class SessionFilterDto {

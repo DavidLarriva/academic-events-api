@@ -1,9 +1,8 @@
-# Multi-stage build (docs/contexto-materia.md §17.4), ajustado a Gradle
-# Groovy DSL (build.gradle, no .kts) y a Java 17 (CLAUDE.md — stack
-# obligatorio confirmado en el Prompt 1). La misma imagen sirve para local
-# (docker run --env-file .env), Ubuntu/systemd o Render (contexto-materia.md
-# §17.8): el ambiente se selecciona 100% por variables de entorno, nunca
-# reconstruyendo la imagen.
+# Multi-stage build (docs/contexto-materia.md seccion 17.4), ajustado a
+# Gradle Groovy DSL (build.gradle, no .kts) y a Java 17. La misma imagen
+# sirve para local (docker run --env-file .env), Ubuntu/systemd o Render
+# (docs/contexto-materia.md seccion 17.8): el ambiente se selecciona 100%
+# por variables de entorno, nunca reconstruyendo la imagen.
 
 # ===================== ETAPA 1: build (JDK) =====================
 FROM eclipse-temurin:17-jdk AS builder

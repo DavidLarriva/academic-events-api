@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Flujos críticos de extremo a extremo (docs/instrucciones.md, entregable
+ * Flujos críticos de extremo a extremo (docs/instrucciones.pdf, entregable
  * "Pruebas") contra un Postgres real efímero (Testcontainers, decisión
  * acordada con el usuario: el V1__initial_schema_and_data.sql del profesor
  * usa tipos/constraints específicos de Postgres que H2 no replica fielmente).
@@ -49,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * <p>
  * Cada método resetea el contador de rate limiting de /auth/register antes
  * de correr: RateLimitAspect usa RateLimitKeyStrategy.IP para ese endpoint
- * (docs/instrucciones.md §7: 3/hora por IP), y MockMvc siempre reporta
+ * (docs/instrucciones.pdf sección 7: 3/hora por IP), y MockMvc siempre reporta
  * "127.0.0.1" como IP de origen, así que sin este reset la 4ª prueba de la
  * clase (o cualquier corrida repetida de ./gradlew test dentro de la misma
  * hora) devolvería 429 en vez de lo que realmente se está probando.

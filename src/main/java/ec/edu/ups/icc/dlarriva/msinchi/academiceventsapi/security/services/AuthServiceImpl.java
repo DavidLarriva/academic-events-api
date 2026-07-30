@@ -30,13 +30,13 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Mensajes de autenticación genéricos (docs/instrucciones.md §4): login()
+ * Mensajes de autenticación genéricos (docs/instrucciones.pdf sección 4): login()
  * atrapa cualquier AuthenticationException (credenciales inválidas, usuario
  * inexistente, cuenta BLOCKED vía UserDetailsImpl.isEnabled()=false) y
  * responde siempre el mismo mensaje/código. register() sí distingue el
- * correo duplicado con 409 (contexto-materia.md §12.10 lo hace explícito).
+ * correo duplicado con 409 (contexto-materia.md sección 12.10 lo hace explícito).
  * Login/register/refresh ahora también emiten y persisten un refresh token
- * (contexto-materia.md §15).
+ * (contexto-materia.md sección 15).
  */
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -108,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
             loginAttemptService.recordFailure(clientIp, email);
             // actor=null a propósito, igual en credencial inválida que en
             // correo inexistente: nunca confirmamos quién intentó (mismo
-            // espíritu que el mensaje genérico de error, instrucciones.md §4).
+            // espíritu que el mensaje genérico de error, instrucciones.pdf sección 4).
             auditService.recordFailure(null, "LOGIN_FAILED", "USER", null, Map.of("email", email));
             throw new UnauthorizedException("INVALID_CREDENTIALS", "Correo o contraseña incorrectos");
         }

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Genera y valida access tokens (claim "type":"access") y refresh tokens
  * (claim "type":"refresh", "jti"=token_id de refresh_tokens) en HS256
- * (contexto-materia.md §12.4, §15.2).
+ * (contexto-materia.md sección 12.4, sección 15.2).
  */
 @Component
 public class JwtUtil {

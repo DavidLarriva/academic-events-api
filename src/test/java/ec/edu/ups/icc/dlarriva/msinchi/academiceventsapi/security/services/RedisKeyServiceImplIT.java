@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Prueba de humo contra el Redis real del docker-compose local
- * (docs/instrucciones.md §6): confirma que la conexión funciona y que
+ * (docs/instrucciones.pdf sección 6): confirma que la conexión funciona y que
  * set/get/increment respetan el TTL obligatorio.
  */
 @DataRedisTest

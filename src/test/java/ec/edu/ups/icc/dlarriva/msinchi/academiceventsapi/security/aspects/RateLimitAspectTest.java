@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Comportamiento al superar el límite (docs/instrucciones.md §7): incrementa
+ * Comportamiento al superar el límite (docs/instrucciones.pdf sección 7): incrementa
  * atómicamente el contador y, al pasarse del límite, corta la ejecución con
  * TooManyRequestsException(429) sin invocar el método real, calculando
  * Retry-After desde el TTL restante de la clave en Redis.

@@ -1,14 +1,14 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.enums;
 
 /**
- * Prefijos de claves de Redis (docs/instrucciones.md §6: "Las claves deberán
+ * Prefijos de claves de Redis (docs/instrucciones.pdf sección 6: "Las claves deberán
  * utilizar prefijos que identifiquen su finalidad, como blocked-user:").
  * Todo lo que vive detrás de estos prefijos es temporal: rate limiting y
  * bloqueos de login. Redis NUNCA almacena usuarios, eventos, inscripciones
  * ni ningún dato principal — eso vive siempre en PostgreSQL.
  * <p>
  * Los RATE_LIMIT_* corresponden exactamente a las 5 categorías de
- * instrucciones.md §7. RATE_LIMIT_REPORTS todavía no se usa en ningún
+ * instrucciones.pdf sección 7. RATE_LIMIT_REPORTS todavía no se usa en ningún
  * endpoint (el módulo de reportes no existe aún) pero queda lista para
  * cuando se implemente.
  */

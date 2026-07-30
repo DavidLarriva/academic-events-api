@@ -3,7 +3,7 @@ package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.dtos;
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.enums.RegistrationStatus;
 
 /**
- * Filtros de query params (contexto-materia.md §10.3). eventId/status
+ * Filtros de query params (contexto-materia.md sección 10.3). eventId/status
  * aplican para cualquier rol; participantId solo tiene efecto real para
  * ADMIN (el service fuerza participantId=currentUser.id para PARTICIPANT y
  * lo ignora para ORGANIZER, que en cambio queda scoped por los eventos que

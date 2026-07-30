@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Conversión UTC -> zona de negocio (docs/instrucciones.md §14: "Zona de
+ * Conversión UTC -> zona de negocio (docs/instrucciones.pdf sección 14: "Zona de
  * negocio: America/Guayaquil. Almacenamiento de instantes: UTC. Formato de
  * intercambio: ISO 8601"). Se usa SOLO al mostrar datos a un humano (reportes
  * PDF/Excel de los prompts 17/18) o similar — nunca en entidades ni en los

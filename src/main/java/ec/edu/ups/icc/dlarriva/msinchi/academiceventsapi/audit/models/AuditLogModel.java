@@ -5,7 +5,7 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.audit.enums.AuditResult
 import java.time.OffsetDateTime;
 
 /**
- * Dominio puro, sin anotaciones JPA (contexto-materia.md §4.2).
+ * Dominio puro, sin anotaciones JPA (contexto-materia.md sección 4.2).
  * previousValue/newValue se mantienen como texto JSON crudo (igual que la
  * entidad); AuditLogMapper los convierte a JsonNode recién al armar el DTO.
  */

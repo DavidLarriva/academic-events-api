@@ -48,7 +48,7 @@ public class UserEntity extends BaseEntity {
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime updatedAt;
 
-    // EAGER deliberado: Spring Security necesita los roles al autenticar (contexto-materia.md §12.3/§9.2).
+    // EAGER deliberado: Spring Security necesita los roles al autenticar (contexto-materia.md sección 12.3/sección 9.2).
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",

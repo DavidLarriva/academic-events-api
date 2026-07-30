@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 /**
  * Envoltorio estándar de respuesta paginada. Cada módulo construye su Page&lt;Entity&gt;
- * con Spring Data (contexto-materia.md §11) y lo adapta aquí, opcionalmente mapeando
+ * con Spring Data (contexto-materia.md sección 11) y lo adapta aquí, opcionalmente mapeando
  * a un DTO de respuesta.
  */
 public record PagedResponseDto<T>(

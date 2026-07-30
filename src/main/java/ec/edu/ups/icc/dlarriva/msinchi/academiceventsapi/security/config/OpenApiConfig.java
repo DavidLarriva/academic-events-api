@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Registra el esquema Bearer JWT (contexto-materia.md §16.4) para habilitar
+ * Registra el esquema Bearer JWT (contexto-materia.md sección 16.4) para habilitar
  * el botón Authorize en Swagger UI. No agrega el requirement globalmente:
  * cada controlador protegido lo declara con
- * @SecurityRequirement(name = OpenApiConfig.SECURITY_SCHEME_NAME) (§16.5),
+ * @SecurityRequirement(name = OpenApiConfig.SECURITY_SCHEME_NAME) (sección 16.5),
  * así los endpoints públicos de AuthController (register/login/refresh/logout)
  * no aparecen con el candado engañosamente.
  */
@@ -31,7 +31,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Academic Events API")
                         .description("API REST para gestión de eventos académicos: usuarios, categorías, eventos, "
-                                + "sesiones, inscripciones y auditoría (docs/instrucciones.md).")
+                                + "sesiones, inscripciones y auditoría (docs/instrucciones.pdf).")
                         .version("v1"))
                 .components(new Components().addSecuritySchemes(SECURITY_SCHEME_NAME, bearerScheme));
     }

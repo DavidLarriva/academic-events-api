@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marca un método de controlador con un límite de solicitudes
- * (docs/instrucciones.md §7), aplicado por RateLimitAspect. Reutilizable por
+ * (docs/instrucciones.pdf sección 7), aplicado por RateLimitAspect. Reutilizable por
  * cualquier módulo futuro (eventos, sesiones, reportes...) sin duplicar la
  * lógica de conteo — solo se agrega la anotación con los valores de la
  * categoría que corresponda.

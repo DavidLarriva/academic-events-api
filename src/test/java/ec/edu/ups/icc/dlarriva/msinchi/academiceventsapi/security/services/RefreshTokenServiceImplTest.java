@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Foco: "token viejo queda inválido tras usarse" (rotación, contexto-materia.md
- * §15.3/§15.4). validateActive() sobre un token ya revocado (reuso) debe
+ * sección 15.3/sección 15.4). validateActive() sobre un token ya revocado (reuso) debe
  * tratarse como posible robo y revocar TODA la familia de tokens activos del
  * usuario, vía el proxy self (@Lazy) para que la transacción REQUIRES_NEW
  * sobreviva al rollback de la excepción que se lanza en el mismo método.

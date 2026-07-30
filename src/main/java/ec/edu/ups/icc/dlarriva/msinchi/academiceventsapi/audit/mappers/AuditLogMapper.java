@@ -8,7 +8,7 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.audit.entities.AuditLog
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.audit.models.AuditLogModel;
 
 /**
- * Conversión manual, sin MapStruct (contexto-materia.md §4.4).
+ * Conversión manual, sin MapStruct (contexto-materia.md sección 4.4).
  */
 public final class AuditLogMapper {
 

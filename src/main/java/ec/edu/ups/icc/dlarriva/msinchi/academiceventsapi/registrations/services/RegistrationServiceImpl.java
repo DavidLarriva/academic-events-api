@@ -41,7 +41,7 @@ import java.util.UUID;
  * en la MISMA transacción que el cambio de estado.
  * <p>
  * Decisiones acordadas explícitamente con el usuario (no estaban resueltas
- * en docs/instrucciones.md):
+ * en docs/instrucciones.pdf):
  * 1) CONFIRMED/REJECTED: solo el ORGANIZER dueño del evento o ADMIN.
  * 2) Cancelar (CANCELLED): sin plazo límite, salvo que el evento ya esté
  * FINISHED (ahí ya no tiene sentido cancelar).

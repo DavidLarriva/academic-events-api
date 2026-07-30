@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.OffsetDateTime;
 
 /**
- * Filtros del reporte de inscripciones (docs/instrucciones.md §13). status
+ * Filtros del reporte de inscripciones (docs/instrucciones.pdf sección 13). status
  * arranca en CONFIRMED (decisión acordada con el usuario: un "listado de
  * inscritos" es el roster de asistentes confirmados, no las 4 estados
  * mezclados) — para ver otro estado se pasa ?status=PENDING explícitamente.

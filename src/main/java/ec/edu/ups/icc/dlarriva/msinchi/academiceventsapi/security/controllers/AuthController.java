@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Rutas relativas: el context-path /api las convierte en /api/auth/**.
- * Límites de docs/instrucciones.md §7: login y registro tienen su propia
+ * Límites de docs/instrucciones.pdf sección 7: login y registro tienen su propia
  * categoría; refresh/logout son públicos (no autenticados) así que caen en
  * la categoría genérica de endpoints públicos; /me sí requiere token, así
  * que usa la categoría de endpoints autenticados.

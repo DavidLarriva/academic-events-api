@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public interface RegistrationRepository extends JpaRepository<RegistrationEntity, Long> {
 
-    /** Usado por events (regla "no eliminar un evento publicado con inscripciones activas", instrucciones.md §9). */
+    /** Usado por events (regla "no eliminar un evento publicado con inscripciones activas", instrucciones.pdf sección 9). */
     boolean existsByEvent_IdAndStatusIn(Long eventId, Collection<RegistrationStatus> statuses);
 
     /**

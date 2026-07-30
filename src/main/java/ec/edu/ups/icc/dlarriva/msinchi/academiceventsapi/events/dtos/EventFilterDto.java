@@ -5,7 +5,7 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.events.enums.EventStatu
 import java.time.OffsetDateTime;
 
 /**
- * Filtros de query params para el listado (contexto-materia.md §10.3):
+ * Filtros de query params para el listado (contexto-materia.md sección 10.3):
  * categoría, estado, organizador y rango de fechas sobre startAt.
  */
 public class EventFilterDto {

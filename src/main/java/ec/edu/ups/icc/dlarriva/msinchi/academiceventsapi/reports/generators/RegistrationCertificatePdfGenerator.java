@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.OffsetDateTime;
 
 /**
- * Comprobante individual (docs/instrucciones.md §13) — documento propio, no
+ * Comprobante individual (docs/instrucciones.pdf sección 13) — documento propio, no
  * la tabla de RegistrationPdfReportGenerator: es un registro personal de una
  * sola inscripción, no un listado. Comparte la misma librería/convenciones
  * (OpenPDF en memoria, fechas en America/Guayaquil), pero con su propio

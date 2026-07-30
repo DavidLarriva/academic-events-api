@@ -30,18 +30,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 /**
- * Base de seguridad (contexto-materia.md §12.9) + autorización por roles
- * (§13) + CORS restringido (docs/instrucciones.md §8). Los requestMatchers
+ * Base de seguridad (contexto-materia.md sección 12.9) + autorización por roles
+ * (sección 13) + CORS restringido (docs/instrucciones.pdf sección 8). Los requestMatchers
  * NO llevan el prefijo /api porque Spring Security evalúa la ruta antes de
- * que se aplique el context-path (§16.3).
+ * que se aplique el context-path (sección 16.3).
  * <p>
  * Dos SecurityFilterChain: swaggerFilterChain (@Order 1) captura primero
  * /swagger-ui/**, /swagger-ui.html y /v3/api-docs/** con HTTP Basic contra
- * un único usuario en memoria SOLO en prod (docs/instrucciones.md §11); en
+ * un único usuario en memoria SOLO en prod (docs/instrucciones.pdf sección 11); en
  * dev queda abierto. filterChain (@Order 2, sin cambios de fondo) maneja
  * todo lo demás con JWT: registro/login/refresh/logout públicos,
  * /actuator/health público, el resto de /actuator/** exige ADMIN
- * (docs/instrucciones.md §12), y cualquier otra ruta exige un access token
+ * (docs/instrucciones.pdf sección 12), y cualquier otra ruta exige un access token
  * válido por defecto.
  */
 @Configuration
@@ -108,7 +108,7 @@ public class SecurityConfig {
         List<String> allowedOrigins = corsProperties.allowedOrigins();
         if (isProd() && allowedOrigins.stream().anyMatch("*"::equals)) {
             throw new IllegalStateException(
-                    "ALLOWED_ORIGINS no puede ser '*' en producción (docs/instrucciones.md §8)");
+                    "ALLOWED_ORIGINS no puede ser '*' en producción (docs/instrucciones.pdf sección 8)");
         }
 
         CorsConfiguration configuration = new CorsConfiguration();

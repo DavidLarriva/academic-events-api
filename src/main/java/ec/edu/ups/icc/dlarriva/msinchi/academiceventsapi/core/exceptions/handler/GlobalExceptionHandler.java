@@ -25,9 +25,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Respuestas uniformes de error (docs/instrucciones.md §10): fecha, código HTTP,
+ * Respuestas uniformes de error (docs/instrucciones.pdf sección 10): fecha, código HTTP,
  * código interno, mensaje y ruta. Los servicios nunca construyen ResponseEntity
- * y los controladores nunca usan try/catch (contexto-materia.md §8.4).
+ * y los controladores nunca usan try/catch (contexto-materia.md sección 8.4).
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {

@@ -1,8 +1,8 @@
 package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.security.services;
 
 /**
- * Bloqueo temporal tras intentos fallidos de login (docs/instrucciones.md
- * §6). Se trackea por IP y por correo en paralelo: el que primero llegue al
+ * Bloqueo temporal tras intentos fallidos de login (docs/instrucciones.pdf
+ * sección 6). Se trackea por IP y por correo en paralelo: el que primero llegue al
  * umbral bloquea esa clave, independientemente del otro.
  */
 public interface LoginAttemptService {

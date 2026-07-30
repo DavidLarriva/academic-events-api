@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Bloqueo temporal tras varios intentos fallidos (docs/instrucciones.md §6):
+ * Bloqueo temporal tras varios intentos fallidos (docs/instrucciones.pdf sección 6):
  * 5 intentos fallidos en la ventana de 15 minutos bloquean la IP y/o el
  * correo por otros 15 minutos.
  */

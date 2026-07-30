@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Se dispara antes de llegar a cualquier controlador (fuera del alcance de
  * GlobalExceptionHandler), por eso arma el mismo ErrorResponse a mano
- * (contexto-materia.md §12.8).
+ * (contexto-materia.md sección 12.8).
  * Ojo: Spring Boot 4 usa Jackson 3 (tools.jackson.*) como ObjectMapper por
  * defecto, no com.fasterxml.jackson.databind (Jackson 2) — no hay bean de
  * ese tipo legado a menos que se agregue explícitamente.

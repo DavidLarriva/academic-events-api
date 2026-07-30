@@ -64,7 +64,7 @@ public class RedisKeyServiceImpl implements RedisKeyService {
     private void requireTtl(Duration ttl) {
         if (ttl == null || ttl.isZero() || ttl.isNegative()) {
             throw new IllegalArgumentException(
-                    "Toda escritura en Redis debe declarar un TTL positivo (docs/instrucciones.md §6)");
+                    "Toda escritura en Redis debe declarar un TTL positivo (docs/instrucciones.pdf sección 6)");
         }
     }
 

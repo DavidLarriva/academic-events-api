@@ -3,7 +3,7 @@ package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.sessions.models;
 import java.time.OffsetDateTime;
 
 /**
- * Dominio puro, sin anotaciones JPA (contexto-materia.md §4.2).
+ * Dominio puro, sin anotaciones JPA (contexto-materia.md sección 4.2).
  */
 public class SessionModel {
 

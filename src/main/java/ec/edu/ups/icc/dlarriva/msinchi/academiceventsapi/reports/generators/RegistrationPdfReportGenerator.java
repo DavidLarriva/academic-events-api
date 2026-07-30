@@ -25,10 +25,10 @@ import java.util.List;
  * de la 3.x porque esa compila a bytecode Java 21, incompatible con el
  * toolchain Java 17 del proyecto) genera el PDF por completo en memoria
  * (ByteArrayOutputStream): sin archivos temporales en disco, según
- * docs/instrucciones.md §15 ("El contenedor de Spring Boot no deberá
+ * docs/instrucciones.pdf sección 15 ("El contenedor de Spring Boot no deberá
  * almacenar archivos permanentes"). Fechas siempre en America/Guayaquil vía
  * BusinessTimeZoneConverter — se almacenan en UTC, pero un reporte es para
- * leer un humano (docs/instrucciones.md §14).
+ * leer un humano (docs/instrucciones.pdf sección 14).
  */
 public final class RegistrationPdfReportGenerator {
 

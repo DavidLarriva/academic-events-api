@@ -3,7 +3,7 @@ package ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.audit.dtos;
 import java.time.OffsetDateTime;
 
 /**
- * Filtros de query params (contexto-materia.md §10.3) para el listado de
+ * Filtros de query params (contexto-materia.md sección 10.3) para el listado de
  * solo lectura de ADMIN.
  */
 public class AuditLogFilterDto {

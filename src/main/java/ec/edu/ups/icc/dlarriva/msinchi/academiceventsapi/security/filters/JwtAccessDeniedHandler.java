@@ -21,7 +21,7 @@ import java.io.IOException;
  * Spring Security usa AccessDeniedHandlerImpl por defecto, que hace
  * response.sendError(403) -> Spring Boot reenvía internamente a /error
  * (BasicErrorController) -> formato JSON distinto al ErrorResponse uniforme
- * del resto de la API (docs/instrucciones.md §10), y además ese forward
+ * del resto de la API (docs/instrucciones.pdf sección 10), y además ese forward
  * interno reevalúa la cadena de filtros con el SecurityContext ya limpio
  * (JwtAuthenticationFilter es OncePerRequestFilter, no vuelve a correr sobre
  * el mismo request) — terminaba devolviendo 401 en vez de 403. Escribir la

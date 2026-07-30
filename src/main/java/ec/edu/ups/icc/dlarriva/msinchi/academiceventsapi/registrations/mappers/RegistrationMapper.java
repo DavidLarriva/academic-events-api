@@ -5,7 +5,7 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.entities.
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.registrations.models.RegistrationModel;
 
 /**
- * Conversión manual, sin MapStruct (contexto-materia.md §4.4).
+ * Conversión manual, sin MapStruct (contexto-materia.md sección 4.4).
  */
 public final class RegistrationMapper {
 

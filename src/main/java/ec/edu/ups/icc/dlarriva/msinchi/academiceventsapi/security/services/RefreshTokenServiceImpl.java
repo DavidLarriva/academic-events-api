@@ -23,7 +23,7 @@ import java.util.UUID;
  * token_hash = SHA-256 sin salt: el refresh token ya es un JWT firmado de
  * alta entropía (no es una contraseña adivinable), y esta verificación corre
  * en cada /refresh y /logout, así que se evita el costo de un hash lento
- * tipo bcrypt/Argon2 (contexto-materia.md §15.3/§15.4).
+ * tipo bcrypt/Argon2 (contexto-materia.md sección 15.3/sección 15.4).
  */
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Genera un UUID por request (docs/instrucciones.md §10, módulo de
+ * Genera un UUID por request (docs/instrucciones.pdf sección 10, módulo de
  * auditoría: "correlation_id ... para cruzar un registro de auditoría con
  * logs técnicos de esa misma solicitud"). Queda en tres lugares: MDC (para
  * que logging.pattern.level de application.yaml lo imprima en TODAS las

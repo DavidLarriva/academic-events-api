@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * Adaptador UserEntity -> Spring Security (contexto-materia.md §12.5).
+ * Adaptador UserEntity -> Spring Security (contexto-materia.md sección 12.5).
  * isEnabled() refleja status ACTIVE/BLOCKED: un usuario BLOCKED no puede
  * autenticarse, pero AuthServiceImpl atrapa cualquier AuthenticationException
  * (incluida DisabledException) y responde el mismo mensaje genérico que unas

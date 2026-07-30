@@ -11,7 +11,7 @@ spring:
         # y el driver de Postgres ya normaliza esas lecturas a UTC sin esto
         # (verificado en runtime), pero se deja explícito para no depender
         # implícitamente de ese comportamiento del driver ni de la zona
-        # horaria por defecto de la JVM donde corra la app (docs/instrucciones.md §14).
+        # horaria por defecto de la JVM donde corra la app (docs/instrucciones.pdf sección 14).
         jdbc:
           time_zone: UTC
   data:
@@ -33,7 +33,7 @@ management:
     health:
       # Explícito aunque coincide con el default de Actuator: /actuator/health
       # público nunca debe filtrar detalles internos (DB/Redis, etc.),
-      # docs/instrucciones.md §12. El resto de /actuator/** sí puede mostrar
+      # docs/instrucciones.pdf sección 12. El resto de /actuator/** sí puede mostrar
       # detalle porque queda protegido con ADMIN en SecurityConfig.
       show-details: never
 

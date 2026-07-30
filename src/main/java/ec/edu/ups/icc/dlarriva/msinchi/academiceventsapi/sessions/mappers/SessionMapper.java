@@ -5,7 +5,7 @@ import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.sessions.entities.Sessi
 import ec.edu.ups.icc.dlarriva.msinchi.academiceventsapi.sessions.models.SessionModel;
 
 /**
- * Conversión manual, sin MapStruct (contexto-materia.md §4.4). No hay
+ * Conversión manual, sin MapStruct (contexto-materia.md sección 4.4). No hay
  * toModel(CreateSessionDto)/toEntity(model) como en categories: crear una
  * sesión requiere adjuntar el EventEntity ya cargado (no solo un id), así
  * que ese armado vive en SessionServiceImpl, igual que EventServiceImpl.

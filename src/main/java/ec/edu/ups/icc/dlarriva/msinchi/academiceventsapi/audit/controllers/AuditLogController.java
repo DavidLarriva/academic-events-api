@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Solo lectura, restringido a ADMIN (docs/instrucciones.md §14/prompt de
+ * Solo lectura, restringido a ADMIN (docs/instrucciones.pdf sección 14/prompt de
  * auditoría). No hay creación manual vía API: las filas las genera
  * AuditServiceImpl desde los propios services de negocio.
  */

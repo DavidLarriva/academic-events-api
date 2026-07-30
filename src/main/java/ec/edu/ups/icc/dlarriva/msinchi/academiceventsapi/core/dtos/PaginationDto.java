@@ -24,7 +24,7 @@ public class PaginationDto {
 
     /**
      * Construye un Pageable validando sortBy contra la lista blanca de campos
-     * ordenables del módulo que llama (contexto-materia.md §11.5).
+     * ordenables del módulo que llama (contexto-materia.md sección 11.5).
      */
     public Pageable toPageable(Set<String> allowedSortFields) {
         if (!allowedSortFields.contains(sortBy)) {

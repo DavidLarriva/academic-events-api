@@ -7,7 +7,7 @@ import java.time.ZoneOffset;
 import java.util.Map;
 
 /**
- * timestamp en OffsetDateTime/UTC explícito (docs/instrucciones.md §14),
+ * timestamp en OffsetDateTime/UTC explícito (docs/instrucciones.pdf sección 14),
  * igual que el resto de la API — no LocalDateTime: sin offset, un cliente no
  * puede saber si esa hora es UTC o la hora local del servidor.
  */
